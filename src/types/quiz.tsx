@@ -5,6 +5,7 @@ type Session = {
   username: string;
   answered: boolean;
   timer: number;
+  categorySelected: Category | null;
 };
 
 type Option = {
@@ -18,9 +19,15 @@ type Question = {
   options: Option[];
 };
 
+type Category = {
+  category: string;
+  description: string;
+  questions: Question[];
+};
+
 type QuizData = {
   quizName: string;
-  questions: Question[];
+  categories: Category[];
 };
 
 type Quiz = {
@@ -45,7 +52,8 @@ type QuizActionType =
     }
   | { type: "RESET_QUIZ" }
   | { type: "DECREMENT_TIMER" }
-  | { type: "CLEAR_TIMER"; payload: { questNum: number } };
+  | { type: "CLEAR_TIMER"; payload: { questNum: number } }
+  | { type: "SET_QUIZ_CATEGORY"; payload: { category: Category } };
 
 type QuizContextType = {
   quiz: Quiz;

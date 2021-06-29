@@ -22,7 +22,7 @@ export default function Quiz() {
 
   function restartQuizHandler() {
     dispatchQuiz({ type: "RESET_QUIZ" });
-    navigate("/instruction");
+    navigate("/category");
   }
 
   useEffect(() => {
@@ -34,13 +34,13 @@ export default function Quiz() {
     const timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {
       clearInterval(intervalId);
       clearTimeout(timeoutId);
-      if (session.questNum === quizData.questions.length - 1)
+      if (session.questNum === session.categorySelected.questions.length - 1)
         navigate("/score");
       dispatchQuiz({
         type: "CLEAR_TIMER",
         payload: {
           questNum:
-            session.questNum < quizData.questions.length - 1
+            session.questNum < session.categorySelected.questions.length - 1
               ? session.questNum + 1
               : 0,
         },
@@ -57,11 +57,12 @@ export default function Quiz() {
     <div className="quiz">
       <h3>Score: {session.score}</h3>
       <p>
-        {session.questNum + 1}.{quizData.questions[session.questNum].question}
+        {session.questNum + 1}.
+        {session.categorySelected.questions[session.questNum].question}
       </p>
       <h2>{session.timer}</h2>
       <ol>
-        {quizData.questions[session.questNum].options.map(
+        {session.categorySelected.questions[session.questNum].options.map(
           ({ option, isRight }) => (
             <li>
               <button
@@ -77,7 +78,8 @@ export default function Quiz() {
                       userResponse: option,
                       answered: true,
                       points: isRight
-                        ? quizData.questions[session.questNum].points
+                        ? session.categorySelected.questions[session.questNum]
+                            .points
                         : 0,
                     },
                   })
@@ -90,7 +92,7 @@ export default function Quiz() {
         )}
       </ol>
 
-      {session.questNum < quizData.questions.length - 1 ? (
+      {session.questNum < session.categorySelected.questions.length - 1 ? (
         <>
           <button
             onClick={() =>
@@ -98,7 +100,8 @@ export default function Quiz() {
                 type: "INCREMENT_QUEST_NUM",
                 payload: {
                   questNum:
-                    session.questNum < quizData.questions.length - 1
+                    session.questNum <
+                    session.categorySelected.questions.length - 1
                       ? session.questNum + 1
                       : 0,
                   answered: false,

@@ -11,34 +11,36 @@ export default function Score() {
 
   function restartQuizHandler() {
     dispatchQuiz({ type: "RESET_QUIZ" });
-    navigate("/instruction");
+    navigate("/category");
   }
 
   return (
     <div className="score">
       <h3>Score: {session.score}</h3>
       <ol>
-        {quizData.questions.map(({ question, options, points }, questNum) => (
-          <li>
-            <p>{question}</p>
-            <p>Points: {points}</p>
-            <ul>
-              {options.map(({ option, isRight }) => (
-                <li
-                  style={{
-                    background: isRight
-                      ? "green"
-                      : session.response[questNum] === option && !isRight
-                      ? "red"
-                      : "",
-                  }}
-                >
-                  {option}
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
+        {session.categorySelected.questions.map(
+          ({ question, options, points }, questNum) => (
+            <li>
+              <p>{question}</p>
+              <p>Points: {points}</p>
+              <ul>
+                {options.map(({ option, isRight }) => (
+                  <li
+                    style={{
+                      background: isRight
+                        ? "green"
+                        : session.response[questNum] === option && !isRight
+                        ? "red"
+                        : "",
+                    }}
+                  >
+                    {option}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          )
+        )}
       </ol>
       <button onClick={restartQuizHandler}>play again</button>
     </div>

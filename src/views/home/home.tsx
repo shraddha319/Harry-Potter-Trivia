@@ -13,7 +13,7 @@ export default function Home() {
   function continueClickHandler() {
     if (username !== "") {
       dispatchQuiz({ type: "SET_USERNAME", payload: { username } });
-      navigate("/instruction");
+      navigate("/category");
     }
   }
 

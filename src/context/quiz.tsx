@@ -1,5 +1,6 @@
 import { createContext, useReducer, useContext } from "react";
 import { Quiz, QuizData, QuizContextType, QuizActionType } from "../types/quiz";
+import { data } from "../data";
 
 const QuizContext = createContext<QuizContextType | null>(null);
 
@@ -9,6 +10,12 @@ function quizReducer(quiz: Quiz, action: QuizActionType): Quiz {
       return {
         ...quiz,
         session: { ...quiz.session, username: action.payload.username },
+      };
+
+    case "SET_QUIZ_CATEGORY":
+      return {
+        ...quiz,
+        session: { ...quiz.session, categorySelected: action.payload.category },
       };
 
     case "STORE_USER_RESPONSE":
@@ -46,6 +53,7 @@ function quizReducer(quiz: Quiz, action: QuizActionType): Quiz {
           response: {},
           answered: false,
           timer: 15,
+          categorySelected: quiz.quizData.categories[0],
         },
       };
 
@@ -75,78 +83,8 @@ function quizReducer(quiz: Quiz, action: QuizActionType): Quiz {
 }
 
 export function QuizProvider({ children }) {
-  const quizData: QuizData = {
-    quizName: "Gardening Quiz",
-    questions: [
-      {
-        question: "What is the technical term for planting seeds?",
-        points: 1,
-        options: [
-          {
-            option: "Germinating",
-            isRight: false,
-          },
-          {
-            option: "Xeriscaping",
-            isRight: false,
-          },
-          {
-            option: "Sowing",
-            isRight: true,
-          },
-          {
-            option: "Fertilizing",
-            isRight: false,
-          },
-        ],
-      },
-      {
-        question: "Which of these nutrients do plants not get from the soil?",
-        points: 1,
-        options: [
-          {
-            option: "Phosphorus",
-            isRight: false,
-          },
-          {
-            option: "Potassium",
-            isRight: false,
-          },
-          {
-            option: "Nitrogen",
-            isRight: false,
-          },
-          {
-            option: "Carbon",
-            isRight: true,
-          },
-        ],
-      },
-      {
-        question:
-          "All of the following plants are from the same family EXCEPT..",
-        points: 1,
-        options: [
-          {
-            option: "Potatoes",
-            isRight: false,
-          },
-          {
-            option: "Tomatoes",
-            isRight: false,
-          },
-          {
-            option: "Radishes",
-            isRight: true,
-          },
-          {
-            option: "Eggplants",
-            isRight: false,
-          },
-        ],
-      },
-    ],
-  };
+  const quizData: QuizData = data;
+
   const initialQuiz: Quiz = {
     quizData,
     session: {
@@ -156,6 +94,7 @@ export function QuizProvider({ children }) {
       username: "anon",
       answered: false,
       timer: 15,
+      categorySelected: quizData.categories[0],
     },
   };
   const [quiz, dispatchQuiz] = useReducer(quizReducer, initialQuiz);

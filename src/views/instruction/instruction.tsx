@@ -12,7 +12,7 @@ export default function Instruction() {
     <div className="instruction layout--default">
       <h1 className="instruction__title">{quizData.quizName}</h1>
       <h2>Welcome {session.username}!</h2>
-      <h3>Total Questions: {quizData.questions.length}</h3>
+      <h3>Total Questions: {session.categorySelected.questions.length}</h3>
       <h3>Time: 10 min</h3>
       <Link to="/quiz">start</Link>
     </div>
