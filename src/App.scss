@@ -1,17 +1,24 @@
-@import "./styles/layout.scss";
-
-*,
-*::before,
-*::after {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+@font-face {
+  font-family: "parry-hotter";
+  src: URL("./font/parry-hotter.regular.ttf") format("truetype");
 }
 
-html,
-body,
-#root,
-.App {
-    width: 100%;
-    height: 100%;
+@font-face {
+  font-family: "filson-regular";
+  src: URL("./font/Filson.Soft/FilsonProRegular-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "filson-bold";
+  src: URL("./font/Filson.Soft/FilsonProBold-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "filson-thin";
+  src: URL("./font/Filson.Soft/FilsonProThin-Thin.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "filson-medium";
+  src: URL("./font/Filson.Soft/FilsonProMedium-Medium.otf") format("opentype");
 }
