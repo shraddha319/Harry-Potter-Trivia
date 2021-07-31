@@ -29,20 +29,26 @@ export default function Home() {
           src={hogwartsLogo}
           alt="hogwarts logo"
         />
-        <div className="lg:hidden flex flex-row justify-center m-4">
+        <div className="lg:hidden flex flex-row justify-center m-2">
           <Link
             to="/login"
             className="bg-primary hover:bg-red-600 text-white py-2 px-4 rounded text-sm m-1"
           >
-            Join Now
+            Sign In
           </Link>
           <Link
-            to="/category"
+            to="/signup"
             className="border-secondary bg-secondary border-2 text-white py-2 px-4 rounded text-sm m-1"
           >
-            Start Now
+            Register
           </Link>
         </div>
+        <Link
+          to="/category"
+          className="inline-block text-xs text-customGray underline hover:text-primary m-1"
+        >
+          Continue As Guest
+        </Link>
       </section>
     </div>
   );
