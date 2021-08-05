@@ -12,9 +12,12 @@ import {
   Login,
   Signup,
 } from "./views/index";
-import { Header } from "./components/index";
+import { Header, PrivateRoute } from "./components/index";
+import { useAuth } from "./context";
 
 export default function App() {
+  const { isLoggedIn } = useAuth();
+
   return (
     <div className="font-filsonMedium w-screen h-screen">
       <Header />
@@ -26,7 +29,11 @@ export default function App() {
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/score" element={<Score />} />
           <Route path="/theme" element={<House />} />
-          <Route path="/leaderboard" element={<LeaderBoard />} />
+          <PrivateRoute
+            isLoggedIn={isLoggedIn}
+            path="/leaderboard"
+            element={<LeaderBoard />}
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
