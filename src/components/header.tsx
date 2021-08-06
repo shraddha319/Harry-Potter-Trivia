@@ -1,6 +1,7 @@
 import playIcon from "../images/Golden-Snitch.svg";
 import leaderBoardIcon from "../images/Triwizard-cup.svg";
 import loginIcon from "../images/Chamber-of-secrets-key.svg";
+import registerIcon from "../images/quill.svg";
 import hamburgerIcon from "../images/hamburger.svg";
 import closeMenu from "../images/cancel.svg";
 import { useState } from "react";
@@ -58,6 +59,17 @@ export default function Header() {
               >
                 <img className="w-10" src={loginIcon} alt="play nav icon" />
                 <p className="uppercase tracking-wider text-primary">Login</p>
+              </a>
+            </li>
+            <li>
+              <a
+                className="flex flex-col items-center m-6 space-y-2"
+                href="/signup"
+              >
+                <img className="w-10" src={registerIcon} alt="play nav icon" />
+                <p className="uppercase tracking-wider text-primary">
+                  Register
+                </p>
               </a>
             </li>
           </ul>
