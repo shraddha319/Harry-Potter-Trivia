@@ -1,5 +1,5 @@
 import React from "react";
-import "./App.scss";
+import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import {
   Home,
@@ -7,7 +7,7 @@ import {
   Instruction,
   Quiz,
   Score,
-  House,
+  Theme,
   LeaderBoard,
   Login,
   Signup,
@@ -28,12 +28,8 @@ export default function App() {
           <Route path="/instruction" element={<Instruction />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/score" element={<Score />} />
-          <Route path="/theme" element={<House />} />
-          <PrivateRoute
-            isLoggedIn={isLoggedIn}
-            path="/leaderboard"
-            element={<LeaderBoard />}
-          />
+          <PrivateRoute path="/theme" element={<Theme />} />
+          <PrivateRoute path="/leaderboard" element={<LeaderBoard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
