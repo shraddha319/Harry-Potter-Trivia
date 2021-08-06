@@ -4,10 +4,15 @@ import loginIcon from "../images/Chamber-of-secrets-key.svg";
 import registerIcon from "../images/quill.svg";
 import hamburgerIcon from "../images/hamburger.svg";
 import closeMenu from "../images/cancel.svg";
+import userIcon from "../images/avatar-male.svg";
 import { useState } from "react";
+import { useAuth } from "../context";
+import { useNavigate } from "react-router";
 
 export default function Header() {
   const [isNavActive, setIsNavActive] = useState(false);
+  const { isLoggedIn, logoutUser } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="h-10 z-10 bg-white w-full fixed top-0 left-0 p-2 flex flex-row items-center shadow-md">
@@ -52,26 +57,64 @@ export default function Header() {
                 </p>
               </a>
             </li>
-            <li>
-              <a
-                className="flex flex-col items-center m-6 space-y-2"
-                href="/login"
-              >
-                <img className="w-10" src={loginIcon} alt="play nav icon" />
-                <p className="uppercase tracking-wider text-primary">Login</p>
-              </a>
-            </li>
-            <li>
-              <a
-                className="flex flex-col items-center m-6 space-y-2"
-                href="/signup"
-              >
-                <img className="w-10" src={registerIcon} alt="play nav icon" />
-                <p className="uppercase tracking-wider text-primary">
-                  Register
-                </p>
-              </a>
-            </li>
+            {isLoggedIn ? (
+              <>
+                <li>
+                  <button
+                    className="flex flex-col items-center justify-center m-6 space-y-2"
+                    onClick={() => {
+                      logoutUser();
+                      navigate("/");
+                    }}
+                  >
+                    <img className="w-10" src={loginIcon} alt="user nav icon" />
+                    <p className="uppercase tracking-wider text-primary">
+                      Logout
+                    </p>
+                  </button>
+                </li>
+                <li>
+                  <a
+                    className="flex flex-col items-center m-6 space-y-2"
+                    href="/user"
+                  >
+                    <img className="w-10" src={userIcon} alt="user nav icon" />
+                    <p className="uppercase tracking-wider text-primary">
+                      Account
+                    </p>
+                  </a>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <a
+                    className="flex flex-col items-center m-6 space-y-2"
+                    href="/login"
+                  >
+                    <img className="w-10" src={loginIcon} alt="play nav icon" />
+                    <p className="uppercase tracking-wider text-primary">
+                      Login
+                    </p>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="flex flex-col items-center m-6 space-y-2"
+                    href="/signup"
+                  >
+                    <img
+                      className="w-10"
+                      src={registerIcon}
+                      alt="play nav icon"
+                    />
+                    <p className="uppercase tracking-wider text-primary">
+                      Register
+                    </p>
+                  </a>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </div>
