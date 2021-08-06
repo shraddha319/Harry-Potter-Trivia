@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useQuiz } from "../../context/quiz";
-import cat from "../../images/quidditch-cat.svg";
-import { ReactComponent as LeaderBoardIcon } from "../../images/Triwizard-cup.svg";
+import axios from "axios";
+import { useQuiz } from "../context/quiz";
+import cat from "../images/quidditch-cat.svg";
+import { ReactComponent as LeaderBoardIcon } from "../images/Triwizard-cup.svg";
 
 export default function Category() {
   const {
@@ -10,14 +11,16 @@ export default function Category() {
     dispatchQuiz,
   } = useQuiz();
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    (async () => {
+      const {
+        data: { quiz },
+      } = await axios.get("/quiz");
+      dispatchQuiz({ type: "FETCH_QUIZ", payload: { categories: quiz } });
+    })();
+  }, []);
 
-  // function continueClickHandler() {
-  //   if (username !== "") {
-  //     dispatchQuiz({ type: "SET_USERNAME", payload: { username } });
-  //     navigate("/instruction");
-  //   }
-  // }
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-6 p-4">

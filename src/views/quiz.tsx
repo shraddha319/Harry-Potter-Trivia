@@ -1,7 +1,7 @@
-import { useQuiz } from "../../context/quiz";
+import { useQuiz } from "../context/quiz";
 
 import { Link, useNavigate } from "react-router-dom";
-import { Option } from "../../types/quiz";
+import { Option } from "../types/quiz";
 import { useEffect } from "react";
 
 export default function Quiz() {

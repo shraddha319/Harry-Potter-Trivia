@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import hogwartsLogo from "../../images/hogwarts-logo.svg";
+import hogwartsLogo from "../images/hogwarts-logo.svg";
 
 export default function Home() {
   return (
