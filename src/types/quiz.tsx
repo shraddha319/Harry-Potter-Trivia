@@ -31,7 +31,7 @@ type QuizData = {
 };
 
 type Quiz = {
-  quizData: QuizData;
+  quizData: QuizData | {};
   session: Session;
 };
 
@@ -53,7 +53,8 @@ type QuizActionType =
   | { type: "RESET_QUIZ" }
   | { type: "DECREMENT_TIMER" }
   | { type: "CLEAR_TIMER"; payload: { questNum: number } }
-  | { type: "SET_QUIZ_CATEGORY"; payload: { category: Category } };
+  | { type: "SET_QUIZ_CATEGORY"; payload: { category: Category } }
+  | { type: "FETCH_QUIZ"; payload: { categories: Category[] } };
 
 type QuizContextType = {
   quiz: Quiz;

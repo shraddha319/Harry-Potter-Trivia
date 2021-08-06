@@ -6,6 +6,15 @@ const QuizContext = createContext<QuizContextType | null>(null);
 
 function quizReducer(quiz: Quiz, action: QuizActionType): Quiz {
   switch (action.type) {
+    case "FETCH_QUIZ":
+      return {
+        ...quiz,
+        quizData: {
+          quizName: "Harry Potter Trivia",
+          categories: action.payload.categories,
+        },
+      };
+
     case "SET_USERNAME":
       return {
         ...quiz,
@@ -83,10 +92,8 @@ function quizReducer(quiz: Quiz, action: QuizActionType): Quiz {
 }
 
 export function QuizProvider({ children }) {
-  const quizData: QuizData = data;
-
   const initialQuiz: Quiz = {
-    quizData,
+    quizData: {},
     session: {
       score: 0,
       questNum: 0,
@@ -94,7 +101,7 @@ export function QuizProvider({ children }) {
       username: "anon",
       answered: false,
       timer: 15,
-      categorySelected: quizData.categories[0],
+      categorySelected: null,
     },
   };
   const [quiz, dispatchQuiz] = useReducer(quizReducer, initialQuiz);
