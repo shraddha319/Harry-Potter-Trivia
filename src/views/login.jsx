@@ -37,10 +37,10 @@ export default function Login() {
         No password, no entry!
       </p>
       <form
-        className="flex flex-col items-center justify-center space-y-6 my-6"
+        className="flex flex-col items-center space-y-6 my-6 w-4/5"
         onSubmit={(e) => e.preventDefault()}
       >
-        <p className="space-y-2 px-2 py-1 w-4/5">
+        <p className="space-y-2 px-2 py-1">
           <label htmlFor="email" className="block text-gray-600 text-sm">
             Email
           </label>
@@ -56,7 +56,7 @@ export default function Login() {
           />
           <small className="block text-red-500 text-xs">{error.email}</small>
         </p>
-        <p className="space-y-2 px-2 py-1 w-4/5">
+        <p className="space-y-2 px-2 py-1">
           <label htmlFor="password" className="block text-gray-600 text-sm">
             Password
           </label>
