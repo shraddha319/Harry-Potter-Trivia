@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import hogwartsLogo from "../images/hogwarts-logo.svg";
+import { useAuth } from "../context";
 
 export default function Home() {
+  const { isLoggedIn } = useAuth();
+
   return (
     <div className="overflow-hidden p-4">
       <section className="hero container h-full mx-auto flex lg:flex-row justify-center items-center lg:space-x-10 sm:flex-col">
@@ -29,26 +32,39 @@ export default function Home() {
           src={hogwartsLogo}
           alt="hogwarts logo"
         />
-        <div className="lg:hidden flex flex-row justify-center m-2">
-          <Link
-            to="/login"
-            className="bg-primary hover:bg-red-600 text-white py-2 px-4 rounded text-sm m-1"
-          >
-            Sign In
-          </Link>
-          <Link
-            to="/signup"
-            className="border-secondary bg-secondary border-2 text-white py-2 px-4 rounded text-sm m-1"
-          >
-            Register
-          </Link>
+        <div className="lg:hidden flex flex-col items-center space-y-4 my-4">
+          {isLoggedIn ? (
+            <Link
+              to="/category"
+              className="bg-primary hover:bg-red-600 text-white py-2 px-4 rounded text-sm m-1"
+            >
+              Start
+            </Link>
+          ) : (
+            <>
+              <p>
+                <Link
+                  to="/login"
+                  className="bg-primary hover:bg-red-600 text-white py-2 px-4 rounded text-sm m-1"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="border-secondary bg-secondary border-2 text-white py-2 px-4 rounded text-sm m-1"
+                >
+                  Register
+                </Link>
+              </p>
+              <Link
+                to="/category"
+                className="block text-xs text-customGray underline hover:text-primary m-1"
+              >
+                Continue As Guest
+              </Link>
+            </>
+          )}
         </div>
-        <Link
-          to="/category"
-          className="inline-block text-xs text-customGray underline hover:text-primary m-1"
-        >
-          Continue As Guest
-        </Link>
       </section>
     </div>
   );
