@@ -1,11 +1,15 @@
-import { ReactComponent as RegisterIcon } from "../../images/quill.svg";
-import { ReactComponent as AvatarMale } from "../../images/avatar-male1.svg";
-import { ReactComponent as AvatarFemale } from "../../images/avatar-female.svg";
+import { ReactComponent as RegisterIcon } from "../images/quill.svg";
+import { ReactComponent as AvatarMale } from "../images/avatar-male1.svg";
+import { ReactComponent as AvatarFemale } from "../images/avatar-female.svg";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
 export default function Signup() {
-  const [isFemale, setIsFemale] = useState(false);
+  const [genderInput, setGenderInput] = useState("male");
+
+  function genderInputHandler(e) {
+    if (e.target.checked) setGenderInput(e.target.value);
+  }
 
   return (
     <div className="flex flex-col items-center p-2 space-y-4">
@@ -15,9 +19,12 @@ export default function Signup() {
         </h1>
         <RegisterIcon fill="#CDB750" className="w-16 h-16" />
       </header>
-      <form className="flex flex-col items-center space-y-6">
-        <label className="flex flex-row items-center space-x-2">
-          {isFemale ? (
+      <form
+        className="flex flex-col items-center space-y-6"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <label className="flex flex-row items-center space-x-2 border-2 border-gray-500 rounded-2xl p-2">
+          {genderInput === "female" ? (
             <AvatarFemale fill="#000" className="w-12 h-12" />
           ) : (
             <AvatarMale fill="#000" className="w-12 h-12" />
@@ -58,33 +65,34 @@ export default function Signup() {
           placeholder="Confirm Password"
           className="border-b-2 py-2 px-4 border-customGray text-xs"
         />
-        <div className="space-x-4">
-          <label className="space-x-2">
+        <p className="space-x-4">
+          <label htmlFor="gender_male" className="space-x-2">
             <input
               type="radio"
               name="gender"
-              id="gender"
+              id="gender_male"
               value="male"
-              onChange={(e) => {
-                e.target.checked ? setIsFemale(false) : setIsFemale(true);
-              }}
+              checked={genderInput === "male"}
+              onChange={genderInputHandler}
             />
             <span className="text-xs text-gray-400">Male</span>
           </label>
-          <label className="space-x-2">
+          <label htmlFor="gender_female" className="space-x-2">
             <input
               type="radio"
               name="gender"
-              id="gender"
+              id="gender_female"
               value="female"
-              onChange={(e) => {
-                e.target.checked ? setIsFemale(true) : setIsFemale(false);
-              }}
+              checked={genderInput === "female"}
+              onChange={genderInputHandler}
             />
             <span className="text-xs text-gray-400">Female</span>
           </label>
-        </div>
-        <button className="bg-primary px-4 py-2 text-white tracking-wider text-sm rounded-full">
+        </p>
+        <button
+          type="submit"
+          className="bg-primary px-4 py-2 text-white tracking-wider text-sm rounded-full"
+        >
           Register
         </button>
       </form>
