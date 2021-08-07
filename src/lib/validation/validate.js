@@ -15,6 +15,11 @@ export function validate(input, validationRules) {
       ] = `${field} must be atleast ${rules.minLen} characters long.`;
     } else if (rules.format && !rules.format?.regexp.test(value)) {
       errors[field] = rules.format.message;
+    } else if (
+      rules.crossFieldEquality &&
+      input[rules.crossFieldEquality.field] !== value
+    ) {
+      errors[field] = rules.crossFieldEquality.message;
     }
   });
   return errors;
