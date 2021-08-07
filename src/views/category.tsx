@@ -1,59 +1,74 @@
 import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
-import { useQuiz } from "../context/quiz";
+import { useQuiz } from "../context";
+import { getQuiz } from "../api";
 import cat from "../images/quidditch-cat.svg";
 import { ReactComponent as LeaderBoardIcon } from "../images/Triwizard-cup.svg";
+import { Loader } from "../components";
 
 export default function Category() {
   const {
     quiz: { quizData },
     dispatchQuiz,
   } = useQuiz();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
-      const {
-        data: { quiz },
-      } = await axios.get("/quiz");
-      dispatchQuiz({ type: "FETCH_QUIZ", payload: { categories: quiz } });
+      try {
+        const {
+          data: {
+            success,
+            data: { quiz },
+          },
+        } = await getQuiz();
+        if (success)
+          dispatchQuiz({ type: "FETCH_QUIZ", payload: { categories: quiz } });
+      } catch (error) {
+        if (error.response) {
+          console.log(error.response);
+        }
+        console.log(error);
+      }
     })();
   }, []);
-
-  const navigate = useNavigate();
 
   return (
     <div className="space-y-6 p-4">
       <section>
         <h1 className="text-lg mx-2 my-1">Welcome back!</h1>
       </section>
-      <section className="space-y-3">
-        <header className="space-x-1 space-y-1 w-auto">
-          <div className="h-0.5 rounded w-5 bg-primary"></div>
-          <h2 className="text-sm text-primary font-semibold tracking-widest">
-            Play
-          </h2>
-        </header>
-        <div className="flex flex-row">
-          {quizData.categories.map((category) => (
-            <button
-              onClick={() => {
-                dispatchQuiz({
-                  type: "SET_QUIZ_CATEGORY",
-                  payload: { category },
-                });
-                navigate("/instruction");
-              }}
-              className="flex flex-col justify-center p-2 rounded bg-primary mx-1 space-y-2 hover:bg-red-700"
-            >
-              <img className="w-12" src={cat} alt="cat" />
-              <p className="text-white tracking-wider text-xs">
-                {category.category}
-              </p>
-            </button>
-          ))}
-        </div>
-      </section>
+      {!quizData?.categories ? (
+        <Loader />
+      ) : (
+        <section className="space-y-3">
+          <header className="space-x-1 space-y-1 w-auto">
+            <div className="h-0.5 rounded w-5 bg-primary"></div>
+            <h2 className="text-sm text-primary font-semibold tracking-widest">
+              Play
+            </h2>
+          </header>
+          <div className="flex flex-row">
+            {quizData.categories.map((category) => (
+              <button
+                onClick={() => {
+                  dispatchQuiz({
+                    type: "SET_QUIZ_CATEGORY",
+                    payload: { category },
+                  });
+                  navigate("/instruction");
+                }}
+                className="flex flex-col justify-center p-2 rounded bg-primary mx-1 space-y-2 hover:bg-red-700"
+              >
+                <img className="w-12" src={cat} alt="cat" />
+                <p className="text-white tracking-wider text-xs">
+                  {category.name}
+                </p>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
       <section className="space-y-3">
         <header className="space-x-1 space-y-1 w-auto">
           <div className="h-0.5 rounded w-5 bg-primary"></div>
@@ -86,23 +101,3 @@ export default function Category() {
     </div>
   );
 }
-
-/* <input
-                onChange={() =>
-                  dispatchQuiz({
-                    type: "SET_QUIZ_CATEGORY",
-                    payload: { category },
-                  })
-                }
-                type="radio"
-                name="quiz-category"
-                value={category.category}
-                id={category.category}
-              />
-              <label
-                className="flex flex-row justify-center items-center p-1 space-x-1 rounded-2xl bg-red-700"
-                htmlFor={category.category}
-              >
-                <img className="w-1/2" src={cat} alt="cat" />
-                <span className="text-white">{category.category}</span>
-              </label> */
