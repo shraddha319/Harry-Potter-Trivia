@@ -1,3 +1,4 @@
 import { getQuiz } from "./quiz.api";
+import API from "./config.api";
 
-export { getQuiz };
+export { API, getQuiz };

@@ -1,7 +1,5 @@
-import axios from "axios";
-
-const apiUrl = process.env.REACT_APP_API_URL;
+import API from "./config.api";
 
 export async function getQuiz() {
-  return axios.get(`${apiUrl}/quiz`);
+  return API.get("/quiz");
 }
