@@ -1,6 +1,5 @@
 import { createContext, useReducer, useContext } from "react";
 import { Quiz, QuizData, QuizContextType, QuizActionType } from "../types/quiz";
-import { data } from "../data";
 
 const QuizContext = createContext<QuizContextType | null>(null);
 

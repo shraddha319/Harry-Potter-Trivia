@@ -1,4 +1,4 @@
-import { useQuiz } from "../context/quiz";
+import { useQuiz } from "../context";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as ScoreIcon } from "../images/Quidditch-goals.svg";
 

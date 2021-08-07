@@ -1,4 +1,4 @@
-import { useQuiz } from "../context/quiz";
+import { useQuiz } from "../context";
 
 import { Link, useNavigate } from "react-router-dom";
 import { Option } from "../types/quiz";
