@@ -31,10 +31,7 @@ export function AuthProvider({ children }) {
   };
   const [auth, dispatchAuth] = useReducer(authReducer, initialAuth);
 
-  useEffect(() => {
-    if (auth.authToken)
-      API.defaults.headers.common["Authorization"] = auth.authToken;
-  }, [auth.authToken]);
+  API.defaults.headers.common["Authorization"] = auth.authToken;
 
   useEffect(() => {
     (async () => {
