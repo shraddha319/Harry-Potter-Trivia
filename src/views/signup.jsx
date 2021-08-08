@@ -1,19 +1,24 @@
 import { ReactComponent as RegisterIcon } from "../images/quill.svg";
 import { ReactComponent as AvatarMale } from "../images/avatar-male1.svg";
 import { ReactComponent as AvatarFemale } from "../images/avatar-female.svg";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { registerValidationRules, validate } from "../lib";
+import { registerValidationRules, validate, formError } from "../lib";
+import { registerUser, verifyIfAvailable } from "../api";
+import { useAuth } from "../context";
 
 export default function Signup() {
+  const { EMAIL_UNIQUE, USERNAME_UNIQUE } = formError;
+  const navigate = useNavigate();
+  const { dispatchAuth } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [signupInput, setSignupInput] = useState({
     username: "",
-    usernameemail: "",
+    email: "",
     gender: "MALE",
     password: "",
     confirmPassword: "",
   });
-
   const [error, setError] = useState({
     username: "",
     email: "",
@@ -26,13 +31,57 @@ export default function Signup() {
       setSignupInput({ ...signupInput, gender: e.target.value });
   }
 
-  function signupFormHandler() {
+  async function signupFormHandler() {
     const errors = validate(signupInput, registerValidationRules);
-    console.log(errors);
-    if (errors === {}) {
-      console.log("valid input!");
-    } else {
-      setError(errors);
+    try {
+      setLoading(true);
+      if (!errors.email) {
+        const res = await verifyIfAvailable({
+          key: "email",
+          value: signupInput.email,
+        });
+        if (res.status === 200) errors["email"] = EMAIL_UNIQUE;
+      }
+      if (!errors.username) {
+        const { status } = await verifyIfAvailable({
+          key: "username",
+          value: signupInput.username,
+        });
+        if (status === 200) errors["username"] = USERNAME_UNIQUE;
+      }
+    } catch (err) {
+      if (err.request) console.log(err.request);
+      else console.log(err.message);
+    } finally {
+      setLoading(false);
+    }
+
+    setError(errors);
+
+    if (Object.keys(errors).length === 0) {
+      setLoading(true);
+      try {
+        const {
+          data: {
+            data: { user },
+          },
+          status,
+        } = await registerUser({
+          ...signupInput,
+          confirmPassword: undefined,
+        });
+        if (status === 201) {
+          navigate("/login", { state: { from: "/signup", user: user.email } });
+        }
+      } catch (err) {
+        if (err.response) {
+          console.log(err.response.data);
+          // if(err.response.status >= 500) dispatchQuiz({type: "SET_5XX_ERROR"} )
+        }
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
     }
   }
 
@@ -167,7 +216,7 @@ export default function Signup() {
           onClick={signupFormHandler}
           className="bg-primary px-4 py-2 text-white tracking-wider text-sm rounded-full"
         >
-          Register
+          {loading ? "Loading..." : "Register"}
         </button>
       </form>
       <p className="text-customGray text-xs p-2">
