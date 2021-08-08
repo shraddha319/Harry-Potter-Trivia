@@ -1,8 +1,39 @@
 import { ReactComponent as LeaderBoardIcon } from "../../images/Triwizard-cup.svg";
 import avatar from "../../images/avatar-male.png";
 import { ReactComponent as Crown } from "../../images/crown.svg";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useQuiz } from "../../context";
+import { getLeaderboard } from "../../api";
 
 export default function LeaderBoard() {
+  const {
+    dispatchQuiz,
+    quiz: { leaderboard },
+  } = useQuiz();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const {
+          data: {
+            data: { leaderboard },
+          },
+          status,
+        } = await getLeaderboard();
+        if (status === 200) {
+          dispatchQuiz({ type: "SET_LEADERBOARD", payload: { leaderboard } });
+          console.log(leaderboard);
+        }
+      } catch (err) {
+        if (err.response && err.response?.status === 403)
+          navigate("/login", { state: { from: "/leaderboard" } });
+        console.log(err.message);
+      }
+    })();
+  }, []);
+
   return (
     <div className="flex flex-col bg-primary  items-center space-y-1">
       <header className="flex flex-row justify-center items-center mt-4">
