@@ -13,3 +13,7 @@ export async function verifyIfAvailable({ key, value }) {
 export async function loginUser(credentials) {
   return API.post("/auth/login", { ...credentials });
 }
+
+export async function getUser(userId) {
+  return API.get(`/user/${userId}`);
+}
