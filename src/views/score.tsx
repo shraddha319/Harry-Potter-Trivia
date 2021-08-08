@@ -1,13 +1,34 @@
-import { useQuiz } from "../context";
+import { useQuiz, useAuth } from "../context";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as ScoreIcon } from "../images/Quidditch-goals.svg";
+import { useEffect } from "react";
+import { postUserScore } from "../api";
 
 export default function Score() {
   const {
     quiz: { session },
     dispatchQuiz,
   } = useQuiz();
+  const {
+    auth: { authToken, user },
+  } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      if (authToken) {
+        try {
+          await postUserScore({
+            quizId: session.categorySelected._id,
+            score: session.score,
+            userId: user._id,
+          });
+        } catch (err) {
+          console.log(err.message);
+        }
+      }
+    })();
+  }, []);
 
   function restartQuizHandler() {
     dispatchQuiz({ type: "RESET_QUIZ" });
