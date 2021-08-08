@@ -85,6 +85,10 @@ function quizReducer(quiz: Quiz, action: QuizActionType): Quiz {
         },
       };
 
+    case "SET_LEADERBOARD": {
+      return { ...quiz, leaderboard: action.payload.leaderboard };
+    }
+
     default:
       return quiz;
   }
@@ -102,6 +106,7 @@ export function QuizProvider({ children }) {
       timer: 15,
       categorySelected: null,
     },
+    leaderboard: [],
   };
   const [quiz, dispatchQuiz] = useReducer(quizReducer, initialQuiz);
 
