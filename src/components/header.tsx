@@ -11,8 +11,18 @@ import { useNavigate } from "react-router";
 
 export default function Header() {
   const [isNavActive, setIsNavActive] = useState(false);
-  const { isLoggedIn, logoutUser } = useAuth();
+  const {
+    auth: { authToken },
+    dispatchAuth,
+  } = useAuth();
   const navigate = useNavigate();
+
+  function logoutHandler() {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userId");
+    dispatchAuth({ type: "LOGOUT_USER" });
+    navigate("/");
+  }
 
   return (
     <header className="h-10 z-10 bg-white w-full fixed top-0 left-0 p-2 flex flex-row items-center shadow-md">
@@ -57,15 +67,12 @@ export default function Header() {
                 </p>
               </a>
             </li>
-            {isLoggedIn ? (
+            {authToken ? (
               <>
-                <li>
+                <li className="flex justify-center m-6">
                   <button
-                    className="flex flex-col items-center justify-center m-6 space-y-2"
-                    onClick={() => {
-                      logoutUser();
-                      navigate("/");
-                    }}
+                    className="flex flex-col items-center space-y-2"
+                    onClick={logoutHandler}
                   >
                     <img className="w-10" src={loginIcon} alt="user nav icon" />
                     <p className="uppercase tracking-wider text-primary">
