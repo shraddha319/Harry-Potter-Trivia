@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useReducer,
-  useState,
-  useContext,
-  useEffect,
-} from "react";
+import { createContext, useState, useContext, useReducer } from "react";
 
 const AuthContext = createContext();
 
@@ -13,17 +7,33 @@ export function AuthProvider({ children }) {
     localStorage.getItem("login") === "true"
   );
 
-  function loginWithCredentials(email, password) {
-    console.log("hello", email, password);
-    if (email === "test@email.com" && password === "testpassword") {
-      console.log("logged in");
-      localStorage.setItem("login", "true");
-      setIsLoggedIn(true);
+  function authReducer(auth, action) {
+    switch (action.type) {
+      case "SET_AUTH_TOKEN":
+        return { ...auth, authToken: action.payload.authToken };
+
+      case "SET_USER":
+        return { ...auth, user: action.payload.user };
+
+      default:
+        return auth;
     }
   }
 
+  const [auth, dispatchAuth] = useReducer(authReducer, {
+    user: {},
+    authToken: null,
+  });
+
+  function logoutUser() {
+    localStorage.removeItem("login");
+    setIsLoggedIn(false);
+  }
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, loginWithCredentials }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, dispatchAuth, auth, logoutUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
