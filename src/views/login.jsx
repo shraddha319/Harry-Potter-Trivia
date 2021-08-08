@@ -2,10 +2,13 @@ import { ReactComponent as Gryffindor } from "../images/Gryffindor.svg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context";
 import { useState } from "react";
+import { Alert } from "../components";
 import { loginValidationRules, validate } from "../lib";
+import { loginUser } from "../api";
 
 export default function Login() {
-  const { loginWithCredentials, isLoggedIn } = useAuth();
+  const [alert, setAlert] = useState(null);
+  const { auth, dispatchAuth } = useAuth();
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
@@ -18,20 +21,50 @@ export default function Login() {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  function loginHandler() {
-    const errors = validate(loginInput, loginValidationRules);
-    console.log(loginInput, loginValidationRules);
-    console.log(errors);
-    if (errors === {}) {
-      loginWithCredentials(loginInput.email, loginInput.password);
-      navigate(state?.from ? state.from : "/category");
-    } else {
-      setError(errors);
+  async function loginHandler() {
+    const validationError = validate(loginInput, loginValidationRules);
+    setError(validationError);
+    if (Object.keys(validationError).length === 0) {
+      try {
+        const {
+          data: {
+            data: { user, authToken },
+          },
+          status,
+        } = await loginUser(loginInput);
+        if (status === 200) {
+          dispatchAuth({
+            type: "SET_AUTH_TOKEN",
+            payload: { authToken },
+          });
+          dispatchAuth({
+            type: "SET_USER",
+            payload: { user },
+          });
+          navigate(state?.from && state.from !== "/signup" ? state.from : "/");
+        }
+      } catch (err) {
+        if (err.response?.status === 401) {
+          setAlert({
+            type: "ERROR",
+            message: "Incorrect email/password. Authentication failed.",
+            code: 401,
+          });
+        } else if (err.request) console.log(err.request);
+        else console.log(err.message);
+      }
     }
   }
 
   return (
     <div className="bg-white w-full h-full flex flex-col items-center p-4">
+      {state?.from === "/signup" && state?.user && (
+        <div>
+          <h2>Account created successfull for {state.user}</h2>
+          <h3>Login with your credentials to continue</h3>
+        </div>
+      )}
+      {alert && <Alert {...alert} />}
       <Gryffindor className="w-36 h-36 my-4" fill="#E63E2D" />
       <p className="text-customGray text-sm tracking-wide">
         No password, no entry!
