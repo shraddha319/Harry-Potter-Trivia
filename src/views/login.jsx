@@ -8,7 +8,7 @@ import { loginUser } from "../api";
 
 export default function Login() {
   const [alert, setAlert] = useState(null);
-  const { auth, dispatchAuth } = useAuth();
+  const { dispatchAuth } = useAuth();
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
@@ -41,6 +41,8 @@ export default function Login() {
             type: "SET_USER",
             payload: { user },
           });
+          localStorage.setItem("authToken", authToken);
+          localStorage.setItem("userId", user._id);
           navigate(state?.from && state.from !== "/signup" ? state.from : "/");
         }
       } catch (err) {
