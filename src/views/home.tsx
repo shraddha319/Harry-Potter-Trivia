@@ -3,7 +3,9 @@ import hogwartsLogo from "../images/hogwarts-logo.svg";
 import { useAuth } from "../context";
 
 export default function Home() {
-  const { isLoggedIn } = useAuth();
+  const {
+    auth: { authToken },
+  } = useAuth();
 
   return (
     <div className="overflow-hidden p-4">
@@ -33,7 +35,7 @@ export default function Home() {
           alt="hogwarts logo"
         />
         <div className="lg:hidden flex flex-col items-center space-y-4 my-4">
-          {isLoggedIn ? (
+          {authToken ? (
             <Link
               to="/category"
               className="bg-primary hover:bg-red-600 text-white py-2 px-4 rounded text-sm m-1"
