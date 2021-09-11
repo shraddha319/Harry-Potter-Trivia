@@ -1,6 +1,6 @@
-import React from "react";
-import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import React from 'react';
+import './App.scss';
+import { Routes, Route } from 'react-router-dom';
 import {
   Home,
   Category,
@@ -11,25 +11,29 @@ import {
   LeaderBoard,
   Login,
   Signup,
-} from "./views/index";
-import { Header, PrivateRoute } from "./components/index";
-import { useAuth } from "./context";
+  UserAccount,
+} from './views';
+import { Header, PrivateRoute } from './components';
+import { useQuiz } from './context';
 
 export default function App() {
-  const { isLoggedIn } = useAuth();
+  const {
+    quiz: { theme },
+  } = useQuiz();
 
   return (
-    <div className="font-filsonMedium w-screen h-screen">
+    <div className={`App font-filsonMedium w-screen h-screen ${theme}`}>
       <Header />
-      <main className="mt-10 h-full w-full">
+      <main className="h-full sm:mt-10">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/category" element={<Category />} />
           <Route path="/instruction" element={<Instruction />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/score" element={<Score />} />
-          <PrivateRoute path="/theme" element={<Theme />} />
+          <Route path="/theme" element={<Theme />} />
           <PrivateRoute path="/leaderboard" element={<LeaderBoard />} />
+          <PrivateRoute path="/user" element={<UserAccount />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>

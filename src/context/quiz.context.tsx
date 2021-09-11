@@ -89,6 +89,9 @@ function quizReducer(quiz: Quiz, action: QuizActionType): Quiz {
       return { ...quiz, leaderboard: action.payload.leaderboard };
     }
 
+    case "SET_THEME": {
+      return { ...quiz, theme: action.payload.theme };
+    }
     default:
       return quiz;
   }
@@ -107,6 +110,7 @@ export function QuizProvider({ children }) {
       categorySelected: null,
     },
     leaderboard: [],
+    theme: localStorage.getItem("theme") || "gryffindor",
   };
   const [quiz, dispatchQuiz] = useReducer(quizReducer, initialQuiz);
 
