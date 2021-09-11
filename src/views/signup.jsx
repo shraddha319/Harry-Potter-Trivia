@@ -1,5 +1,5 @@
 import { ReactComponent as RegisterIcon } from '../images/quill.svg';
-import { ReactComponent as AvatarMale } from '../images/avatar-male1.svg';
+import { ReactComponent as AvatarMale } from '../images/avatar-male.svg';
 import { ReactComponent as AvatarFemale } from '../images/avatar-female.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';

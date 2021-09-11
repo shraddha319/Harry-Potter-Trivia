@@ -1,10 +1,9 @@
-import { ReactComponent as LeaderBoardIcon } from "../../images/Triwizard-cup.svg";
-import avatar from "../../images/avatar-male.png";
-import { ReactComponent as Crown } from "../../images/crown.svg";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useQuiz } from "../../context";
-import { getLeaderboard } from "../../api";
+import { ReactComponent as LeaderBoardIcon } from '../../images/Triwizard-cup.svg';
+import { ReactComponent as Crown } from '../../images/crown.svg';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuiz } from '../../context';
+import { getLeaderboard } from '../../api';
 
 export default function LeaderBoard() {
   const {
@@ -24,12 +23,12 @@ export default function LeaderBoard() {
           status,
         } = await getLeaderboard();
         if (status === 200) {
-          dispatchQuiz({ type: "SET_LEADERBOARD", payload: { leaderboard } });
+          dispatchQuiz({ type: 'SET_LEADERBOARD', payload: { leaderboard } });
           console.log(leaderboard);
         }
       } catch (err) {
         if (err.response && err.response?.status === 403)
-          navigate("/login", { state: { from: "/leaderboard" } });
+          navigate('/login', { state: { from: '/leaderboard' } });
         console.log(err.message);
       } finally {
         setLoading(false);
@@ -47,7 +46,7 @@ export default function LeaderBoard() {
       </header>
       <main className="h-full w-full space-y-4">
         {loading ? (
-          "Loading..."
+          'Loading...'
         ) : (
           <>
             <section>
@@ -57,11 +56,6 @@ export default function LeaderBoard() {
                     <p className="flex flex-col items-center text-white text-bold text-xl">
                       2.
                     </p>
-                    <img
-                      src={avatar}
-                      alt="second place avatar"
-                      className="w-12 h-12"
-                    />
                     <p className="text-white text-xs">
                       {leaderboard[1]._id.username}
                     </p>
@@ -72,11 +66,6 @@ export default function LeaderBoard() {
                 )}
                 <li className="flex flex-col items-center m-2">
                   <Crown fill="gold" className="w-10 h-10" />
-                  <img
-                    src={avatar}
-                    alt="first place avatar"
-                    className="w-16 h-16"
-                  />
                   <p className="text-white text-xs">
                     {leaderboard[0]._id.username}
                   </p>
@@ -87,11 +76,6 @@ export default function LeaderBoard() {
                     <p className="flex flex-col items-center text-white text-bold text-xl">
                       3.
                     </p>
-                    <img
-                      src={avatar}
-                      alt="third place avatar"
-                      className="w-12 h-12"
-                    />
                     <p className="text-white text-xs">
                       {leaderboard[2]._id.username}
                     </p>
@@ -109,7 +93,6 @@ export default function LeaderBoard() {
                     <p className="text-bold text-xl text-gray-500 p-2">
                       {index + 1}
                     </p>
-                    <img src={avatar} className="p-1 w-auto" />
                     <p className="col-span-3 py-3 text-gray-900 text-sm">
                       {user._id.username}
                     </p>
