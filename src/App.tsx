@@ -11,7 +11,6 @@ import {
   LeaderBoard,
   Login,
   Signup,
-  UserAccount,
 } from './views';
 import { Header, PrivateRoute } from './components';
 import { useQuiz } from './context';
@@ -33,7 +32,6 @@ export default function App() {
           <Route path="/score" element={<Score />} />
           <Route path="/theme" element={<Theme />} />
           <PrivateRoute path="/leaderboard" element={<LeaderBoard />} />
-          <PrivateRoute path="/user" element={<UserAccount />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
