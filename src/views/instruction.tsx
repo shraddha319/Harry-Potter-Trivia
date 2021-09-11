@@ -1,6 +1,6 @@
-import { useQuiz } from "../context";
+import { useQuiz } from '../context';
 
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 export default function Instruction() {
   const {
@@ -9,24 +9,24 @@ export default function Instruction() {
 
   return (
     <div className="space-y-4 flex flex-col items-center px-4 py-2">
-      <h1 className="text-lg text-center uppercase tracking-widest text-primary">
-        {session.categorySelected.category}
+      <h1 className="text-lg lg:text-4xl text-center uppercase tracking-widest text-primary">
+        {session.categorySelected.category || 'HI'}
       </h1>
-      <p className="text-xs text-justify text-customGray">
+      <p className="text-xs lg:text-lg text-justify text-customGray">
         {session.categorySelected.description}
       </p>
-      <h1 className="text-lg text-center uppercase tracking-widest text-primary">
+      <h1 className="text-lg lg:text-3xl text-center tracking-widest text-primary">
         Instructions
       </h1>
-      <ul className="list-outside text-xs list-disc m-6 space-y-2">
+      <ul className="list-outside text-xs lg:text-base list-disc m-6 space-y-2">
         <li>
-          There are a total of{" "}
+          There are a total of{' '}
           <span className="text-primary">
             {session.categorySelected.questions.length} questions.
           </span>
         </li>
         <li>
-          Each question has a time limit of{" "}
+          Each question has a time limit of{' '}
           <span className="text-primary">15 seconds.</span>
         </li>
         <li>
@@ -38,15 +38,15 @@ export default function Instruction() {
           Each correct answer will be awarded 1 point. 0 for incorrect answers.
         </li>
       </ul>
-      <div>
+      <div className="lg:my-10 space-x-4">
         <Link
-          className="inline-block text-sm text-white bg-primary py-2 px-4 mx-1 rounded "
+          className="inline-block text-sm text-white bg-primary py-2 px-4 rounded lg:text-xl"
           to="/quiz"
         >
           Start
         </Link>
         <Link
-          className="inline-block text-sm text-customGray border-2 border-customGray mx-1 py-2 px-4 rounded "
+          className="inline-block text-sm text-customGray border-2 border-customGray py-2 px-4 rounded lg:text-xl"
           to="/category"
         >
           Go Back
