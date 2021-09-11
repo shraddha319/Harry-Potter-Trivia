@@ -5,9 +5,9 @@ module.exports = {
     extend: {
       colors: {
         customGray: "#232323",
-        primary: "#E63E2D",
+        // primary: "#E63E2D",
         gold: "#CDB750",
-        secondary: "#CDB750",
+        // secondary: "#CDB750",
       },
 
       screens: {
