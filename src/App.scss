@@ -1,0 +1,81 @@
+@font-face {
+  font-family: 'parry-hotter';
+  src: URL('./font/parry-hotter.regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'filson-regular';
+  src: URL('./font/Filson.Soft/FilsonProRegular-Regular.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'filson-bold';
+  src: URL('./font/Filson.Soft/FilsonProBold-Bold.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'filson-thin';
+  src: URL('./font/Filson.Soft/FilsonProThin-Thin.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'filson-medium';
+  src: URL('./font/Filson.Soft/FilsonProMedium-Medium.otf') format('opentype');
+}
+
+.gryffindor {
+  --clr-primary: #e63e2d;
+  --clr-secondary: #cdb750;
+}
+
+.slytherin {
+  --clr-primary: #1c5b4c;
+  --clr-secondary: #cdcdcd;
+}
+
+.hufflepuff {
+  --clr-primary: #ccb750;
+  --clr-secondary: #282828;
+}
+
+.ravenclaw {
+  --clr-primary: #021a26;
+  --clr-secondary: #c09364;
+}
+
+.bg-primary {
+  background: var(--clr-primary);
+}
+
+.bg-secondary {
+  background: var(--clr-secondary);
+}
+
+.text-primary {
+  color: var(--clr-primary);
+}
+
+.border-primary {
+  border-color: var(--clr-primary);
+}
+
+.border-secondary {
+  border-color: var(--clr-secondary);
+}
+
+.text-secondary {
+  color: var(--clr-secondary);
+}
+
+@media (min-width: 1024px) {
+  .App {
+    main {
+      width: 60%;
+      margin: auto;
+      margin-top: 5rem;
+      // display: flex;
+      // flex-direction: column;
+      // justify-content: center;
+    }
+  }
+}
