@@ -1,13 +1,8 @@
-import { formError } from "../constants/form";
+import { formError } from '../constants/form';
+import { ValidationRules } from './types';
+const { EMAIL_INVALID, PASSWORD_INVALID, PASSWORD_MATCH } = formError;
 
-const {
-  EMAIL_INVALID,
-  PASSWORD_INVALID,
-  USERNAME_INVALID,
-  PASSWORD_MATCH,
-} = formError;
-
-export const registerValidationRules = {
+export const registerValidationRules: ValidationRules = {
   email: {
     required: true,
     format: {
@@ -23,18 +18,13 @@ export const registerValidationRules = {
       message: PASSWORD_INVALID,
     },
   },
-  username: {
+  firstName: {
     required: true,
-    minLen: 5,
-    format: {
-      regexp: /^[a-zA-Z0-9]+$/,
-      message: USERNAME_INVALID,
-    },
   },
   confirmPassword: {
     required: true,
     crossFieldEquality: {
-      field: "password",
+      field: 'password',
       message: PASSWORD_MATCH,
     },
   },

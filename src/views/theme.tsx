@@ -11,7 +11,7 @@ export default function Theme() {
     dispatchQuiz,
   } = useQuiz();
 
-  function themeHandler(e) {
+  function themeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.checked) {
       dispatchQuiz({
         type: 'SET_THEME',
