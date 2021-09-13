@@ -1,7 +1,5 @@
-import { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useQuiz } from '../context';
-import { getQuiz } from '../api';
 import cat from '../images/quidditch-cat.svg';
 import { ReactComponent as LeaderBoardIcon } from '../images/Triwizard-cup.svg';
 import { Loader } from '../components';
@@ -9,29 +7,7 @@ import { Loader } from '../components';
 export default function Category() {
   const {
     quiz: { quizData },
-    dispatchQuiz,
   } = useQuiz();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const {
-          data: {
-            success,
-            data: { quiz },
-          },
-        } = await getQuiz();
-        if (success)
-          dispatchQuiz({ type: 'FETCH_QUIZ', payload: { categories: quiz } });
-      } catch (error) {
-        if (error.response) {
-          console.log(error.response);
-        }
-        console.log(error);
-      }
-    })();
-  }, []);
 
   return (
     <div className="space-y-10 p-4">
@@ -50,21 +26,15 @@ export default function Category() {
           </header>
           <div className="flex flex-row">
             {quizData.categories.map((category) => (
-              <button
-                onClick={() => {
-                  dispatchQuiz({
-                    type: 'SET_QUIZ_CATEGORY',
-                    payload: { category },
-                  });
-                  navigate('/instruction');
-                }}
+              <Link
+                to={`${category._id}/instruction`}
                 className="flex flex-col justify-center p-2 lg:p-8 rounded bg-primary mx-1 space-y-2 hover:bg-red-700"
               >
                 <img className="w-12" src={cat} alt="cat" />
                 <p className="text-white tracking-wider text-xs lg:text-lg">
                   {category.name}
                 </p>
-              </button>
+              </Link>
             ))}
           </div>
         </section>
