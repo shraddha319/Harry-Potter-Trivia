@@ -6,15 +6,16 @@ export default function Home() {
   const {
     auth: { authToken },
   } = useAuth();
-
+  // TODO: fix hogwarts logo in mobile screen
   return (
     <div className="overflow-hidden p-4">
       <section className="hero container h-full mx-auto flex lg:flex-row lg:flex-wrap justify-center items-center lg:space-x-10 sm:flex-col">
-        <h1 className="text-4xl text-center lg:text-6xl text-primary leading-tight">
+        <h1 className="text-4xl text-center lg:text-6xl text-customGray leading-tight">
           Harry Potter Trivia
         </h1>
+
         <img
-          className="lg:w-64 sm:w-auto"
+          className="lg:w-64 sm:w-24"
           src={hogwartsLogo}
           alt="hogwarts logo"
         />
