@@ -9,8 +9,10 @@ import {
   Score,
   Theme,
   LeaderBoard,
+  UserHistory,
   Login,
   Signup,
+  Profile,
 } from './views';
 import { Header, PrivateRoute } from './components';
 import { useQuiz } from './context';
@@ -27,11 +29,16 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/category" element={<Category />} />
-          <Route path="/instruction" element={<Instruction />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/score" element={<Score />} />
+          <Route
+            path="/category/:categoryId/instruction"
+            element={<Instruction />}
+          />
+          <Route path="/category/:categoryId/play" element={<Quiz />} />
+          <Route path="/category/:categoryId/score" element={<Score />} />
           <Route path="/theme" element={<Theme />} />
+          <PrivateRoute path="/scores" element={<UserHistory />} />
           <PrivateRoute path="/leaderboard" element={<LeaderBoard />} />
+          <PrivateRoute path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
