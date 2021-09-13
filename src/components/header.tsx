@@ -1,10 +1,10 @@
 import playIcon from '../images/Golden-Snitch.svg';
 import leaderBoardIcon from '../images/Triwizard-cup.svg';
 import loginIcon from '../images/Chamber-of-secrets-key.svg';
-import registerIcon from '../images/quill.svg';
 import hamburgerIcon from '../images/hamburger.svg';
 import closeMenu from '../images/cancel.svg';
 import userIcon from '../images/avatar-male.svg';
+import logoIcon from '../images/Glasses-and-Scar.svg';
 import { useState } from 'react';
 import { useAuth } from '../context';
 import { useNavigate, NavLink, Link } from 'react-router-dom';
@@ -12,24 +12,17 @@ import { useNavigate, NavLink, Link } from 'react-router-dom';
 export default function Header() {
   const [isNavActive, setIsNavActive] = useState(false);
   const {
-    auth: { authToken },
+    auth: { authToken, user },
     dispatchAuth,
   } = useAuth();
   const navigate = useNavigate();
 
-  function logoutHandler() {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userId');
-    dispatchAuth({ type: 'LOGOUT_USER' });
-    navigate('/');
-  }
-
   function NavItems() {
     return (
       <nav className="flex flex-col items-center space-y-2 lg:flex-row lg:justify-between lg:w-full">
-        <Link to="/" className="space-x-2 flex items-center justify-center">
-          <img src={loginIcon} className="w-12" alt="logo" />
-          <p className="text-3xl lg:text-xl">Brand</p>
+        <Link to="/" className="space-x-2 flex items-end justify-center">
+          <img src={logoIcon} className="w-12 w-12" alt="logo" />
+          <p className="text-3xl text-primary">Quiz</p>
         </Link>
         <ul className="lg:flex lg:flex-row lg:items-center space-x-4">
           <li>
@@ -54,53 +47,59 @@ export default function Header() {
               <p className="tracking-wider text-primary lg:text-lg">Theme</p>
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              end
-              activeClassName="border-b-4 border-secondary"
-              className="flex flex-col lg:flex-row items-center space-y-2 space-x-2 p-2"
-              to="/leaderboard"
-            >
-              <img
-                className="h-10 lg:h-8"
-                src={leaderBoardIcon}
-                alt="play nav icon"
-              />
-              <p className="tracking-wider text-primary lg:text-xl">Scores</p>
-            </NavLink>
-          </li>
           {authToken ? (
             <>
-              <li className="flex justify-center m-6">
-                <button
-                  className="flex flex-col lg:flex-row items-center space-y-2"
-                  onClick={logoutHandler}
+              <li>
+                <NavLink
+                  end
+                  activeClassName="border-b-4 border-secondary"
+                  className="flex flex-col lg:flex-row items-center space-y-2 space-x-2 p-2"
+                  to="/scores"
                 >
                   <img
                     className="h-10 lg:h-8"
-                    src={loginIcon}
-                    alt="user nav icon"
+                    src={leaderBoardIcon}
+                    alt="play nav icon"
                   />
                   <p className="tracking-wider text-primary lg:text-xl">
-                    Logout
+                    My Scores
                   </p>
-                </button>
+                </NavLink>
               </li>
               <li>
                 <NavLink
                   end
                   activeClassName="border-b-4 border-secondary"
                   className="flex flex-col lg:flex-row items-center space-y-2 space-x-2 p-2"
-                  to="/user"
+                  to="/leaderboard"
+                >
+                  <img
+                    className="h-10 lg:h-8"
+                    src={leaderBoardIcon}
+                    alt="play nav icon"
+                  />
+                  <p className="tracking-wider text-primary lg:text-xl">
+                    Score Board
+                  </p>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  end
+                  activeClassName="border-b-4 border-secondary"
+                  className="flex flex-col lg:flex-row items-center space-y-2 space-x-2 p-2"
+                  to="/profile"
                 >
                   <img
                     className="h-10 lg:h-8"
                     src={userIcon}
                     alt="user nav icon"
                   />
-                  <p className="tracking-wider text-primary lg:text-xl">
-                    Account
-                  </p>
+                  {user?.firstName && (
+                    <p className="tracking-wider text-primary lg:text-xl">
+                      {user.firstName}
+                    </p>
+                  )}
                 </NavLink>
               </li>
             </>
