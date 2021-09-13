@@ -1,56 +1,46 @@
-import { createContext, useContext, useReducer, useEffect } from "react";
-import { API, getUser } from "../api";
+import { createContext, useContext, useReducer, useEffect } from 'react';
+import { API, getUser } from '../api';
+import { authReducer } from './reducers/auth.reducer';
+import { AuthContextType, AuthState } from './types/auth.types';
 
-const AuthContext = createContext();
+const initialAuth: AuthState = {
+  user: null,
+  leaderboard: null,
+  authToken: localStorage.getItem('authToken') || null,
+  history: null,
+};
 
-function authReducer(auth, action) {
-  switch (action.type) {
-    case "SET_AUTH_TOKEN":
-      return { ...auth, authToken: action.payload.authToken };
+const AuthContext = createContext<AuthContextType>({
+  auth: initialAuth,
+  dispatchAuth: () => undefined,
+});
 
-    case "SET_USER":
-      return { ...auth, user: action.payload.user };
-
-    case "LOGOUT_USER":
-      return {
-        user: {},
-        authToken: null,
-      };
-
-    default:
-      return auth;
-  }
-}
-
-export function AuthProvider({ children }) {
-  const initialAuth = {
-    user: {
-      _id: localStorage.getItem("userId") || null,
-    },
-    authToken: localStorage.getItem("authToken") || null,
-  };
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, dispatchAuth] = useReducer(authReducer, initialAuth);
 
-  API.defaults.headers.common["Authorization"] = auth.authToken;
+  API.defaults.headers.common['Authorization'] = auth.authToken;
 
   useEffect(() => {
     (async () => {
-      if (auth.authToken && auth.user._id) {
+      const userId = localStorage.getItem('userId');
+      if (auth.authToken && userId) {
         try {
           const {
             data: {
               data: { user },
             },
             status,
-          } = await getUser(auth.user._id);
+          } = await getUser(userId);
           if (status === 200) {
-            dispatchAuth({ type: "SET_USER", payload: { user } });
+            dispatchAuth({ type: 'SET_USER', payload: { user } });
           }
         } catch (err) {
           if (err.response && err.response.status === 403) {
-            dispatchAuth({ type: "SET_TOKEN", payload: { authToken: null } });
-            localStorage.removeItem("authToken");
-            localStorage.removeItem("userId");
+            dispatchAuth({
+              type: 'LOGOUT_USER',
+            });
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userId');
           }
         }
       }
@@ -64,6 +54,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
   return useContext(AuthContext);
 }
