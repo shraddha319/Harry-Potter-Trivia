@@ -20,6 +20,70 @@ export default function Login() {
   const { dispatchAuth } = useAuth();
   const navigate = useNavigate();
 
+  async function testLoginHandler() {
+    try {
+      const credentials: {
+        email: string;
+        password: string;
+      } = {
+        email: process.env.REACT_APP_TEST_EMAIL || '',
+        password: process.env.REACT_APP_TEST_PASSWORD || '',
+      };
+
+      const {
+        data: {
+          data: { user, authToken },
+        },
+        status,
+      } = await loginUser(credentials);
+      if (status === 200) {
+        dispatchAuth({
+          type: 'SET_AUTH_TOKEN',
+          payload: { authToken },
+        });
+        dispatchAuth({
+          type: 'SET_USER',
+          payload: { user },
+        });
+        localStorage.setItem('authToken', authToken);
+        localStorage.setItem('userId', user._id);
+        navigate('/category');
+      }
+    } catch (err) {
+      if (err.response) {
+        const {
+          data: {
+            error: { errors },
+          },
+          status,
+        } = err.response;
+        if (status === 400 && errors) {
+          setError(
+            errors.reduce(
+              (
+                errObj: FormError,
+                {
+                  message,
+                  key,
+                  type,
+                }: { message: string; type: string; key: string }
+              ) => {
+                return { ...errObj, [key]: message };
+              },
+              {}
+            )
+          );
+        } else if (status > 400) {
+          setError({
+            email: '',
+            password: '',
+            login: 'Incorrect username/password',
+          });
+        }
+      }
+    }
+  }
+
   async function loginHandler() {
     const validationError = validate(loginInput, loginValidationRules);
     setError({ ...error, ...validationError });
@@ -145,14 +209,25 @@ export default function Login() {
           {loading ? <Loader /> : 'Entry'}
         </button>
       </form>
-      <p className="text-customGray text-xs lg:text-base space-x-2">
-        <span>Don't have an account?</span>
-        <Link
-          to="/signup"
-          className="inline-block text-xs lg:text-base text-primary underline"
-        >
-          Sign Up
-        </Link>
+      <p className="space-y-2 flex flex-col items-center">
+        <p className="text-customGray text-xs lg:text-base space-x-2">
+          <span>Don't have an account?</span>
+          <Link
+            to="/signup"
+            className="inline-block text-xs lg:text-base text-primary underline"
+          >
+            Sign Up
+          </Link>
+        </p>
+        <p className="text-customGray text-xs lg:text-base space-x-2">
+          <button
+            type="submit"
+            onClick={testLoginHandler}
+            className="bg-white underline border-primary text-primary px-3 py-1 text-sm lg:text-base font-bold tracking-widest"
+          >
+            Test Login
+          </button>
+        </p>
       </p>
     </div>
   );
