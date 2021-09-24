@@ -58,7 +58,11 @@ export default function LeaderBoard() {
                   <li className="flex flex-col items-center m-2">
                     <Crown fill="gold" className="w-10 h-10" />
                     <p className="text-xs lg:text-lg">
-                      {`${leaderboard[0]._id.firstName} ${leaderboard[0]._id.lastName}`}
+                      {`${leaderboard[0]._id.firstName} ${
+                        leaderboard[0]._id.lastName
+                          ? leaderboard[0]._id.lastName
+                          : ''
+                      }`}
                     </p>
                     <p className="text-sm">Points: {leaderboard[0].points}</p>
                   </li>
@@ -75,7 +79,9 @@ export default function LeaderBoard() {
                 {leaderboard.map(({ _id, points }, index) => (
                   <li className="grid grid-cols-6 grid-rows-1 px-4 py-1 text-center ">
                     <p className="text-bold text-xl p-2">{index + 1}</p>
-                    <p className="col-span-4 py-3 text-sm">{`${_id.firstName} ${_id.lastName}`}</p>
+                    <p className="col-span-4 py-3 text-sm">{`${_id.firstName} ${
+                      _id.lastName ? _id.lastName : ''
+                    }`}</p>
                     <p className="py-3 text-sm">{points}</p>
                   </li>
                 ))}

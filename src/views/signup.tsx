@@ -40,12 +40,18 @@ export default function Signup() {
     if (Object.keys(errors).length === 0) {
       setLoading(true);
       try {
-        const reqBody = (({ email, firstName, lastName, password }) => ({
+        const reqBody: {
+          email: string;
+          password: string;
+          firstName: string;
+          lastName?: string;
+        } = (({ email, firstName, password }) => ({
           email,
           firstName,
-          lastName,
           password,
         }))(signupInput);
+        if (signupInput.lastName !== '')
+          reqBody.lastName = signupInput.lastName;
 
         const { status: signUpStatus } = await registerUser(reqBody);
         const {
