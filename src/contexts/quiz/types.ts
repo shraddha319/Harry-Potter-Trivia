@@ -1,10 +1,19 @@
-import { MongooseObjectId } from './common.types';
+import { MongooseObjectId, APIError } from '../common.types';
 
 type QuizState = {
-  quizData: QuizData | null;
+  quiz: {
+    status: string;
+    error: APIError | null;
+    data: QuizData | null;
+  };
   username: string | null;
   session: Session | null;
   theme: Theme;
+  leaderboard: {
+    status: string;
+    error: APIError | null;
+    data: Leaderboard | null;
+  };
 };
 
 type QuizData = {
@@ -42,8 +51,18 @@ type Session = {
 
 type Theme = string;
 
+type Leaderboard = [
+  {
+    _id: { firstName: string; lastName: string };
+    points: number;
+    timestamp: string;
+  }
+];
+
 type QuizActionType =
-  | { type: 'FETCH_QUIZ'; payload: { categories: Category[] } }
+  | { type: 'FETCH_QUIZ_REQUEST' }
+  | { type: 'FETCH_QUIZ_SUCCESS'; payload: { categories: Category[] } }
+  | { type: 'FETCH_QUIZ_FAILED'; payload: { error: APIError } }
   | { type: 'SET_USERNAME'; payload: { username: string } }
   | {
       type: 'SET_USER_RESPONSE';
@@ -54,7 +73,11 @@ type QuizActionType =
       };
     }
   | { type: 'RESET_QUIZ' }
-  | { type: 'SET_THEME'; payload: { theme: Theme } };
+  | { type: 'SET_THEME'; payload: { theme: Theme } }
+  | { type: 'FETCH_LEADERBOARD_REQUEST' }
+  | { type: 'FETCH_LEADERBOARD_SUCCESS'; payload: { leaderboard: Leaderboard } }
+  | { type: 'FETCH_LEADERBOARD_FAILED'; payload: { error: APIError } }
+  | { type: 'REMOVE_LEADERBOARD' };
 
 type QuizContextType = {
   quiz: QuizState;
