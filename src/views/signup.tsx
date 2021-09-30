@@ -1,17 +1,16 @@
 import { ReactComponent as RegisterIcon } from '../images/quill.svg';
-import { ReactComponent as AvatarMale } from '../images/avatar-male.svg';
-import { ReactComponent as AvatarFemale } from '../images/avatar-female.svg';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { registerValidationRules, validate } from '../lib';
-import { registerUser, loginUser } from '../api';
-import { useAuth } from '../context';
+// import { registerUser, loginUser } from '../api';
+// import { useAuth } from '../context';
+import { useAuth, useUser, signUpUser } from '../contexts';
 import { Loader } from '../components';
 import { FormInput, FormError } from '../types/form.types';
 
 export default function Signup() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [signupInput, setSignupInput] = useState<FormInput>({
     firstName: '',
     lastName: '',
@@ -19,89 +18,148 @@ export default function Signup() {
     password: '',
     confirmPassword: '',
   });
-  const [error, setError] = useState<FormError>({
+  const [formError, setFormError] = useState<FormError>({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const { dispatchAuth } = useAuth();
+  const {
+    auth: { status, error },
+    dispatchAuth,
+  } = useAuth();
+  const { dispatchUser } = useUser();
+
+  useEffect(() => {
+    if (
+      status === 'failed' &&
+      error &&
+      error.errors &&
+      error.statusCode === 400
+    ) {
+      console.log(error);
+      // setFormError(
+      //   error.errors.reduce((errObj, { message, key, type }) => {
+      //     return { ...errObj, [key]: message };
+      //   }, {})
+      // );
+      setFormError(
+        error.errors.reduce(
+          (
+            errObj: FormError,
+            {
+              message,
+              key,
+              type,
+            }: { message: string; key: string; type: string }
+          ) => {
+            return { ...errObj, [key]: message };
+          },
+          {}
+        )
+      );
+    }
+
+    if (status === 'success') navigate('/books');
+  }, [status, navigate, error]);
+
+  function signupFormHandler() {
+    const validationError = validate(signupInput, registerValidationRules);
+    setFormError({ ...formError, ...validationError });
+
+    if (Object.keys(validationError).length === 0) {
+      const reqBody: {
+        email: string;
+        password: string;
+        firstName: string;
+        lastName?: string;
+      } = (({ email, firstName, password }) => ({
+        email,
+        firstName,
+        password,
+      }))(signupInput);
+
+      if (signupInput.lastName !== '') reqBody.lastName = signupInput.lastName;
+
+      signUpUser(dispatchAuth, dispatchUser, reqBody);
+    }
+  }
 
   // function genderInputHandler(e) {
   //   if (e.target.checked)
   //     setSignupInput({ ...signupInput, gender: e.target.value });
   // }
 
-  async function signupFormHandler() {
-    const errors = validate(signupInput, registerValidationRules);
-    setError(errors);
+  // async function signupFormHandler() {
+  //   const errors = validate(signupInput, registerValidationRules);
+  //   setFormError(errors);
 
-    if (Object.keys(errors).length === 0) {
-      setLoading(true);
-      try {
-        const reqBody: {
-          email: string;
-          password: string;
-          firstName: string;
-          lastName?: string;
-        } = (({ email, firstName, password }) => ({
-          email,
-          firstName,
-          password,
-        }))(signupInput);
-        if (signupInput.lastName !== '')
-          reqBody.lastName = signupInput.lastName;
+  //   if (Object.keys(errors).length === 0) {
+  //     setLoading(true);
+  //     try {
+  //       const reqBody: {
+  //         email: string;
+  //         password: string;
+  //         firstName: string;
+  //         lastName?: string;
+  //       } = (({ email, firstName, password }) => ({
+  //         email,
+  //         firstName,
+  //         password,
+  //       }))(signupInput);
+  //       if (signupInput.lastName !== '')
+  //         reqBody.lastName = signupInput.lastName;
 
-        const { status: signUpStatus } = await registerUser(reqBody);
-        const {
-          data: {
-            data: { user, authToken },
-          },
-          status: loginStatus,
-        } = await loginUser({
-          email: signupInput.email,
-          password: signupInput.password,
-        });
+  //       const { status: signUpStatus } = await registerUser(reqBody);
+  //       const {
+  //         data: {
+  //           data: { user, authToken },
+  //         },
+  //         status: loginStatus,
+  //       } = await loginUser({
+  //         email: signupInput.email,
+  //         password: signupInput.password,
+  //       });
 
-        if (signUpStatus === 201 && loginStatus === 200) {
-          dispatchAuth({ type: 'LOGIN_USER', payload: { user, authToken } });
-          localStorage.setItem('authToken', authToken);
-          localStorage.setItem('userId', user._id);
-          navigate('/category');
-        }
-      } catch (err) {
-        if (err.response) {
-          const {
-            data: {
-              error: { errors },
-            },
-            status,
-          } = err.response;
+  //       if (signUpStatus === 201 && loginStatus === 200) {
+  //         dispatchAuth({ type: 'LOGIN_USER', payload: { user, authToken } });
+  //         localStorage.setItem('authToken', authToken);
+  //         localStorage.setItem('userId', user._id);
+  //         navigate('/category');
+  //       }
+  //     } catch (err) {
+  //       if (err.response) {
+  //         const {
+  //           data: {
+  //             formError: { errors },
+  //           },
+  //           status,
+  //         } = err.response;
 
-          if (status === 400 && errors) {
-            setError(
-              errors.reduce(
-                (
-                  errObj: FormError,
-                  {
-                    message,
-                    key,
-                    type,
-                  }: { message: string; key: string; type: string }
-                ) => {
-                  return { ...errObj, [key]: message };
-                },
-                {}
-              )
-            );
-          }
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-  }
+  //         if (status === 400 && errors) {
+  //           setFormError(
+  //             errors.reduce(
+  //               (
+  //                 errObj: FormError,
+  //                 {
+  //                   message,
+  //                   key,
+  //                   type,
+  //                 }: { message: string; key: string; type: string }
+  //               ) => {
+  //                 return { ...errObj, [key]: message };
+  //               },
+  //               {}
+  //             )
+  //           );
+  //         }
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // }
 
   return (
     <div className="flex flex-col items-center p-2 space-y-5">
@@ -142,7 +200,7 @@ export default function Signup() {
               }
             />
             <small className="block text-red-500 text-xs">
-              {error.firstName}
+              {formError.firstName}
             </small>
           </p>
           <p className="space-y-1">
@@ -164,7 +222,7 @@ export default function Signup() {
               }
             />
             <small className="block text-red-500 text-xs">
-              {error.lastName}
+              {formError.lastName}
             </small>
           </p>
         </p>
@@ -186,7 +244,9 @@ export default function Signup() {
               setSignupInput({ ...signupInput, email: e.target.value })
             }
           />
-          <small className="block text-red-500 text-xs">{error.email}</small>
+          <small className="block text-red-500 text-xs">
+            {formError.email}
+          </small>
         </p>
         <p className="space-y-2 px-2 py-1 w-full">
           <label
@@ -206,7 +266,9 @@ export default function Signup() {
               setSignupInput({ ...signupInput, password: e.target.value })
             }
           />
-          <small className="block text-red-500 text-xs">{error.password}</small>
+          <small className="block text-red-500 text-xs">
+            {formError.password}
+          </small>
         </p>
         <p className="space-y-2 px-2 py-1 w-full">
           <label
@@ -230,7 +292,7 @@ export default function Signup() {
             }
           />
           <small className="block text-red-500 text-xs">
-            {error.confirmPassword}
+            {formError.confirmPassword}
           </small>
         </p>
         {/* <p className="space-x-4">
@@ -262,7 +324,7 @@ export default function Signup() {
           onClick={signupFormHandler}
           className="bg-primary px-4 py-2 text-white tracking-wider text-sm rounded-full lg:text-lg"
         >
-          {loading ? <Loader /> : 'Register'}
+          {status === 'loading' ? <Loader /> : 'Register'}
         </button>
       </form>
       <p className="text-customGray text-xs p-2 lg:text-base">

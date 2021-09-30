@@ -1,19 +1,27 @@
-import { useQuiz } from '../context';
+import { useQuiz, fetchQuiz } from '../contexts';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Loader } from '../components';
+import { useEffect } from 'react';
 
 export default function Instruction() {
   const { categoryId } = useParams();
   const {
-    quiz: { quizData },
+    quiz: {
+      quiz: { data: quizData, status },
+    },
+    dispatchQuiz,
   } = useQuiz();
 
   const category = quizData?.categories.find((cat) => cat._id === categoryId);
 
+  useEffect(() => {
+    if (status === 'idle') fetchQuiz(dispatchQuiz);
+  }, []);
+
   return (
     <div className="space-y-4 lg:space-y-8 flex flex-col items-center px-4 py-2">
-      {!category ? (
+      {!category || status === 'loading' ? (
         <Loader />
       ) : (
         <>
@@ -32,10 +40,6 @@ export default function Instruction() {
               <span className="text-primary">
                 {category.questions.length} questions.
               </span>
-            </li>
-            <li>
-              Each question has a time limit of{' '}
-              <span className="text-primary">15 seconds.</span>
             </li>
             <li>
               Click on the <span className="text-primary">Next</span> button to

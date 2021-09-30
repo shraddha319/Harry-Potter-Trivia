@@ -2,7 +2,7 @@ import { ReactComponent as Gryffindor } from '../images/Gryffindor.svg';
 import { ReactComponent as Slytherin } from '../images/Slytherin.svg';
 import { ReactComponent as Hufflepuff } from '../images/Hufflepuff.svg';
 import { ReactComponent as Ravenclaw } from '../images/Ravenclaw.svg';
-import { useQuiz } from '../context';
+import { useQuiz } from '../contexts';
 
 export default function HouseIcon() {
   const {

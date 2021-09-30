@@ -1,150 +1,124 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context';
-import { useState } from 'react';
+// import { useAuth } from '../context';
+import { useState, useEffect } from 'react';
 import { HouseIcon, Loader } from '../components';
 import { loginValidationRules, validate } from '../lib';
-import { loginUser } from '../api';
 import { FormInput, FormError } from '../types/form.types';
+import { useAuth, useUser, loginUser } from '../contexts';
 
 export default function Login() {
   const [loginInput, setLoginInput] = useState<FormInput>({
     email: '',
     password: '',
   });
-  const [error, setError] = useState<FormError>({
+  const [formError, setFormError] = useState<FormError>({
     login: '',
     email: '',
     password: '',
   });
-  const [loading, setLoading] = useState(false);
-  const { dispatchAuth } = useAuth();
+  const {
+    auth: { status, error },
+    dispatchAuth,
+  } = useAuth();
+  const { dispatchUser } = useUser();
   const navigate = useNavigate();
 
-  async function testLoginHandler() {
-    try {
-      const credentials: {
-        email: string;
-        password: string;
-      } = {
-        email: process.env.REACT_APP_TEST_EMAIL || '',
-        password: process.env.REACT_APP_TEST_PASSWORD || '',
-      };
-
-      const {
-        data: {
-          data: { user, authToken },
-        },
-        status,
-      } = await loginUser(credentials);
-      if (status === 200) {
-        dispatchAuth({
-          type: 'SET_AUTH_TOKEN',
-          payload: { authToken },
-        });
-        dispatchAuth({
-          type: 'SET_USER',
-          payload: { user },
-        });
-        localStorage.setItem('authToken', authToken);
-        localStorage.setItem('userId', user._id);
-        navigate('/category');
-      }
-    } catch (err) {
-      if (err.response) {
-        const {
-          data: {
-            error: { errors },
-          },
-          status,
-        } = err.response;
-        if (status === 400 && errors) {
-          setError(
-            errors.reduce(
-              (
-                errObj: FormError,
-                {
-                  message,
-                  key,
-                  type,
-                }: { message: string; type: string; key: string }
-              ) => {
-                return { ...errObj, [key]: message };
-              },
-              {}
-            )
-          );
-        } else if (status > 400) {
-          setError({
-            email: '',
-            password: '',
-            login: 'Incorrect username/password',
-          });
-        }
-      }
-    }
+  function testLoginHandler() {
+    const credentials: {
+      email: string;
+      password: string;
+    } = {
+      email: process.env.REACT_APP_TEST_EMAIL || '',
+      password: process.env.REACT_APP_TEST_PASSWORD || '',
+    };
+    loginUser(dispatchAuth, dispatchUser, credentials);
   }
 
-  async function loginHandler() {
+  // async function testLoginHandler() {
+  //   try {
+  //     const credentials: {
+  //       email: string;
+  //       password: string;
+  //     } = {
+  //       email: process.env.REACT_APP_TEST_EMAIL || '',
+  //       password: process.env.REACT_APP_TEST_PASSWORD || '',
+  //     };
+
+  //     const {
+  //       data: {
+  //         data: { user, authToken },
+  //       },
+  //       status,
+  //     } = await loginUser(credentials);
+  //     if (status === 200) {
+  //       dispatchAuth({
+  //         type: 'SET_AUTH_TOKEN',
+  //         payload: { authToken },
+  //       });
+  //       dispatchAuth({
+  //         type: 'SET_USER',
+  //         payload: { user },
+  //       });
+  //       localStorage.setItem('authToken', authToken);
+  //       localStorage.setItem('userId', user._id);
+  //       navigate('/category');
+  //     }
+  //   } catch (err) {
+  //     if (err.response) {
+  //       const {
+  //         data: {
+  //           error: { errors },
+  //         },
+  //         status,
+  //       } = err.response;
+  //       if (status === 400 && errors) {
+  //         setError(
+  //           errors.reduce(
+  //             (
+  //               errObj: FormError,
+  //               {
+  //                 message,
+  //                 key,
+  //                 type,
+  //               }: { message: string; type: string; key: string }
+  //             ) => {
+  //               return { ...errObj, [key]: message };
+  //             },
+  //             {}
+  //           )
+  //         );
+  //       } else if (status > 400) {
+  //         setError({
+  //           email: '',
+  //           password: '',
+  //           login: 'Incorrect username/password',
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
+
+  useEffect(() => {
+    if (status === 'failed' && !error) {
+      setFormError({
+        email: '',
+        password: '',
+        login: 'Invalid email/password.',
+      });
+    } else if (status === 'success') {
+      navigate('/category');
+    }
+  }, [status, navigate]);
+
+  function loginHandler() {
     const validationError = validate(loginInput, loginValidationRules);
-    setError({ ...error, ...validationError });
+    setFormError({ ...formError, ...validationError });
 
     if (Object.keys(validationError).length === 0) {
-      setLoading(true);
-      try {
-        const {
-          data: {
-            data: { user, authToken },
-          },
-          status,
-        } = await loginUser(loginInput);
-        if (status === 200) {
-          dispatchAuth({
-            type: 'SET_AUTH_TOKEN',
-            payload: { authToken },
-          });
-          dispatchAuth({
-            type: 'SET_USER',
-            payload: { user },
-          });
-          localStorage.setItem('authToken', authToken);
-          localStorage.setItem('userId', user._id);
-          navigate('/category');
-        }
-      } catch (err) {
-        if (err.response) {
-          const {
-            data: {
-              error: { errors },
-            },
-            status,
-          } = err.response;
-          if (status === 400 && errors) {
-            setError(
-              errors.reduce(
-                (
-                  errObj: FormError,
-                  {
-                    message,
-                    key,
-                    type,
-                  }: { message: string; type: string; key: string }
-                ) => {
-                  return { ...errObj, [key]: message };
-                },
-                {}
-              )
-            );
-          } else if (status > 400) {
-            setError({
-              email: '',
-              password: '',
-              login: 'Incorrect username/password',
-            });
-          }
-        }
-      } finally {
-        setLoading(false);
-      }
+      const credentials = (({ email, password }) => ({ email, password }))(
+        loginInput
+      );
+      loginUser(dispatchAuth, dispatchUser, credentials);
     }
   }
 
@@ -160,7 +134,7 @@ export default function Login() {
         className="flex flex-col items-center space-y-6 lg:space-y-8 my-6 w-4/5"
         onSubmit={(e) => e.preventDefault()}
       >
-        <p className="block text-red-500 text-sm ">{error.login}</p>
+        <p className="block text-red-500 text-sm ">{formError.login}</p>
         <p className="space-y-2 px-2 py-1">
           <label
             htmlFor="email"
@@ -179,7 +153,9 @@ export default function Login() {
               setLoginInput({ ...loginInput, email: e.target.value })
             }
           />
-          <small className="block text-red-500 text-xs">{error.email}</small>
+          <small className="block text-red-500 text-xs">
+            {formError.email}
+          </small>
         </p>
         <p className="space-y-2 px-2 py-1">
           <label
@@ -199,14 +175,14 @@ export default function Login() {
               setLoginInput({ ...loginInput, password: e.target.value })
             }
           />
-          <p className="block text-red-500 text-xs">{error.password}</p>
+          <p className="block text-red-500 text-xs">{formError.password}</p>
         </p>
         <button
           type="submit"
           onClick={loginHandler}
           className="bg-primary px-4 py-2 text-white text-sm lg:text-lg font-bold tracking-widest rounded-full"
         >
-          {loading ? <Loader /> : 'Entry'}
+          {status === 'loading' ? 'Loading...' : 'Entry'}
         </button>
       </form>
       <p className="space-y-2 flex flex-col items-center">

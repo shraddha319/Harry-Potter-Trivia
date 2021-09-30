@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import hogwartsLogo from '../images/hogwarts-logo.svg';
-import { useAuth } from '../context';
+import { useAuth } from '../contexts';
 
 export default function Home() {
   const {
-    auth: { authToken },
+    auth: { token },
   } = useAuth();
   // TODO: fix hogwarts logo in mobile screen
   return (
@@ -20,10 +20,10 @@ export default function Home() {
           alt="hogwarts logo"
         />
         <div className="flex flex-col items-center space-y-4 my-4">
-          {authToken ? (
+          {token ? (
             <Link
               to="/category"
-              className="bg-primary hover:bg-red-600 text-white py-2 px-4 rounded text-sm m-1"
+              className="bg-primary text-white py-2 px-4 rounded text-sm m-1 lg:text-lg lg:py-3 lg:px-4"
             >
               Start
             </Link>
@@ -32,7 +32,7 @@ export default function Home() {
               <p className="lg:mb-3">
                 <Link
                   to="/login"
-                  className="bg-primary hover:bg-red-600 text-white py-2 px-4 rounded text-sm m-1 lg:text-2xl lg:m-4"
+                  className="bg-primary text-white py-2 px-4 rounded text-sm m-1 lg:text-2xl lg:m-4"
                 >
                   Sign In
                 </Link>
@@ -43,12 +43,12 @@ export default function Home() {
                   Register
                 </Link>
               </p>
-              <Link
+              {/* <Link
                 to="/category"
                 className="block text-xs text-customGray underline hover:text-primary m-1 lg:text-lg"
               >
                 Continue As Guest
-              </Link>
+              </Link> */}
             </>
           )}
         </div>

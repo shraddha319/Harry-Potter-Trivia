@@ -1,12 +1,15 @@
-import { useQuiz } from '../context';
+import { useQuiz } from '../contexts';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as ScoreIcon } from '../images/Quidditch-goals.svg';
 import { Loader } from '../components';
-import { Option } from '../context/types/quiz.types';
+import { Option } from '../contexts/quiz/types';
 
 export default function Score() {
   const {
-    quiz: { session, quizData },
+    quiz: {
+      session,
+      quiz: { data: quizData },
+    },
     dispatchQuiz,
   } = useQuiz();
 

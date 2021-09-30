@@ -5,16 +5,20 @@ import hamburgerIcon from '../images/hamburger.svg';
 import closeMenu from '../images/cancel.svg';
 import userIcon from '../images/avatar-male.svg';
 import logoIcon from '../images/Glasses-and-Scar.svg';
+import themeIcon from '../images/wand.svg';
+import scoreIcon from '../images/Quidditch-goals.svg';
 import { useState } from 'react';
-import { useAuth } from '../context';
+import { useAuth, useUser } from '../contexts';
 import { useNavigate, NavLink, Link } from 'react-router-dom';
 
 export default function Header() {
   const [isNavActive, setIsNavActive] = useState(false);
   const {
-    auth: { authToken, user },
-    dispatchAuth,
+    auth: { token },
   } = useAuth();
+  const {
+    user: { profile: user },
+  } = useUser();
   const navigate = useNavigate();
 
   function NavItems() {
@@ -36,18 +40,7 @@ export default function Header() {
               <p className="tracking-wider text-primary lg:text-xl">Play</p>
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              end
-              activeClassName="border-b-4 border-secondary"
-              className="flex flex-col lg:flex-row items-center space-y-2 space-x-2 p-2"
-              to="/theme"
-            >
-              <img className="h-10 lg:h-8" src={playIcon} alt="play nav icon" />
-              <p className="tracking-wider text-primary lg:text-lg">Theme</p>
-            </NavLink>
-          </li>
-          {authToken ? (
+          {token ? (
             <>
               <li>
                 <NavLink
@@ -58,11 +51,11 @@ export default function Header() {
                 >
                   <img
                     className="h-10 lg:h-8"
-                    src={leaderBoardIcon}
+                    src={scoreIcon}
                     alt="play nav icon"
                   />
                   <p className="tracking-wider text-primary lg:text-xl">
-                    My Scores
+                    My Score
                   </p>
                 </NavLink>
               </li>
@@ -124,6 +117,21 @@ export default function Header() {
               </li>
             </>
           )}
+          <li>
+            <NavLink
+              end
+              activeClassName="border-b-4 border-secondary"
+              className="flex flex-col lg:flex-row items-center space-y-2 space-x-2 p-2"
+              to="/theme"
+            >
+              <img
+                className="h-10 lg:h-8"
+                src={themeIcon}
+                alt="play nav icon"
+              />
+              <p className="tracking-wider text-primary lg:text-lg">Theme</p>
+            </NavLink>
+          </li>
         </ul>
       </nav>
     );

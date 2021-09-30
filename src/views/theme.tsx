@@ -3,7 +3,7 @@ import { ReactComponent as Slytherin } from '../images/Slytherin.svg';
 import { ReactComponent as Hufflepuff } from '../images/Hufflepuff.svg';
 import { ReactComponent as Ravenclaw } from '../images/Ravenclaw.svg';
 import { ReactComponent as SortingHat } from '../images/sorting-hat.svg';
-import { useQuiz } from '../context';
+import { useQuiz } from '../contexts';
 
 export default function Theme() {
   const {

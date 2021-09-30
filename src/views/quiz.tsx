@@ -1,9 +1,9 @@
-import { useAuth, useQuiz } from '../context';
+import { useQuiz, updateUserScore, useUser } from '../contexts';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Option } from '../context/types/quiz.types';
+import { Option } from '../contexts/quiz/types';
 import { useReducer, useState } from 'react';
 import { Loader } from '../components';
-import { postUserScore } from '../api';
+// import { postUserScore } from '../api';
 
 type Session = {
   answered: boolean;
@@ -60,12 +60,15 @@ function sessionReducer(state: Session, action: SessionActionType): Session {
 export default function Quiz() {
   const { categoryId } = useParams();
   const {
-    quiz: { quizData },
+    quiz: {
+      quiz: { data: quizData },
+    },
     dispatchQuiz,
   } = useQuiz();
   const {
-    auth: { user },
-  } = useAuth();
+    user: { profile: user },
+    dispatchUser,
+  } = useUser();
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
   const [session, dispatchSession] = useReducer(sessionReducer, {
@@ -93,17 +96,24 @@ export default function Quiz() {
 
   async function finishQuizHandler() {
     if (user) {
-      try {
-        setLoader(true);
-        await postUserScore(user._id, {
-          quiz: categoryId,
-          score: session.score,
-        });
-      } catch (err) {
-        console.log(err.message);
-      } finally {
-        setLoader(false);
-      }
+      // try {
+      //   setLoader(true);
+      //   await postUserScore(user._id, {
+      //     quiz: categoryId,
+      //     score: session.score,
+      //   });
+      // } catch (err) {
+      //   console.log(err.message);
+      // } finally {
+      //   setLoader(false);
+      // }
+      setLoader(true);
+      updateUserScore(dispatchUser, {
+        userId: user._id,
+        quizId: categoryId,
+        score: session.score,
+      });
+      setLoader(false);
     }
 
     dispatchQuiz({
