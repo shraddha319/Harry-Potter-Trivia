@@ -1,5 +1,5 @@
 import API from './config.api';
-import { MongooseObjectId } from '../context/types/common.types';
+import { MongooseObjectId } from '../contexts/common.types';
 
 export async function getUserHistory(userId: MongooseObjectId) {
   return API.get(`/users/${userId}/scores`, {
@@ -13,9 +13,13 @@ export async function getLeaderboard(userId: MongooseObjectId) {
   });
 }
 
-export async function postUserScore(
-  userId: MongooseObjectId,
-  data: { quiz: MongooseObjectId; score: number }
-) {
-  return API.post(`/users/${userId}/scores`, { ...data });
+export async function postUserScore(args: {
+  userId: MongooseObjectId;
+  quizId: MongooseObjectId;
+  score: number;
+}) {
+  return API.post(`/users/${args.userId}/scores`, {
+    quiz: args.quizId,
+    score: args.score,
+  });
 }
