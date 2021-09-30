@@ -1,99 +1,62 @@
 import { Loader } from '../../components';
-import { useAuth } from '../../context';
+import { useAuth, useUser, editProfile, useQuiz } from '../../contexts';
 import { useState } from 'react';
-import { registerValidationRules, validate } from '../../lib';
-import { Link, useNavigate } from 'react-router-dom';
+import { editProfileValidationRules, validate } from '../../lib';
+import { useNavigate } from 'react-router-dom';
 import loginIcon from '../../images/Chamber-of-secrets-key.svg';
-import { registerUser, loginUser } from '../../api';
 import { FormInput, FormError } from '../../types/form.types';
 
 export default function Profile() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [signupInput, setSignupInput] = useState<FormInput>({
-    firstName: '',
-    lastName: '',
-    email: '',
+  const { dispatchAuth } = useAuth();
+  const {
+    dispatchUser,
+    user: { profile: user },
+  } = useUser();
+  const { dispatchQuiz } = useQuiz();
+  const [loading, setLoading] = useState({
+    logout: false,
+    edit: false,
   });
-  const [error, setError] = useState<FormError>({
+  const [signupInput, setSignupInput] = useState<FormInput>({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+  });
+  const [formError, setFormError] = useState<FormError>({
     firstName: '',
     lastName: '',
-    email: '',
   });
   const [edit, setEdit] = useState(false);
 
-  const {
-    auth: { user },
-    dispatchAuth,
-  } = useAuth();
-
   function logoutHandler() {
+    setLoading({ ...loading, logout: true });
+    dispatchUser({ type: 'LOGOUT_USER' });
+    dispatchAuth({ type: 'LOGOUT_AUTH' });
+    dispatchQuiz({ type: 'REMOVE_LEADERBOARD' });
     localStorage.removeItem('authToken');
-    localStorage.removeItem('userId');
-    dispatchAuth({ type: 'LOGOUT_USER' });
+    setLoading({ ...loading, logout: false });
     navigate('/');
   }
 
-  async function signupFormHandler() {
-    const errors = validate(signupInput, registerValidationRules);
-    setError(errors);
+  async function editProfileHandler() {
+    if (!user) return;
+    if (!edit) setEdit(true);
+    else {
+      setLoading({ ...loading, edit: true });
+      const validationError = validate(signupInput, editProfileValidationRules);
+      setFormError({ ...formError, ...validationError });
 
-    if (Object.keys(errors).length === 0) {
-      setLoading(true);
-      try {
-        const reqBody = (({ email, firstName, lastName, password }) => ({
-          email,
-          firstName,
-          lastName,
-          password,
-        }))(signupInput);
-
-        const { status: signUpStatus } = await registerUser(reqBody);
-        const {
-          data: {
-            data: { user, authToken },
-          },
-          status: loginStatus,
-        } = await loginUser({
-          email: signupInput.email,
-          password: signupInput.password,
-        });
-
-        if (signUpStatus === 201 && loginStatus === 200) {
-          dispatchAuth({ type: 'LOGIN_USER', payload: { user, authToken } });
-          localStorage.setItem('authToken', authToken);
-          localStorage.setItem('userId', user._id);
-          navigate('/category');
-        }
-      } catch (err) {
-        if (err.response) {
-          const {
-            data: {
-              error: { errors },
-            },
-            status,
-          } = err.response;
-
-          if (status === 400 && errors) {
-            setError(
-              errors.reduce(
-                (
-                  errObj: FormError,
-                  {
-                    message,
-                    key,
-                    type,
-                  }: { message: string; key: string; type: string }
-                ) => {
-                  return { ...errObj, [key]: message };
-                },
-                {}
-              )
-            );
-          }
-        }
-      } finally {
-        setLoading(false);
+      if (Object.keys(validationError).length === 0) {
+        const reqBody: {
+          firstName?: string;
+          lastName?: string;
+        } = Object.keys(signupInput).reduce((obj: FormInput, key) => {
+          if (signupInput[key] !== '') obj[key] = signupInput[key];
+          return obj;
+        }, {});
+        await editProfile(dispatchUser, user._id, reqBody);
+        setLoading({ ...loading, edit: false });
+        setEdit(false);
       }
     }
   }
@@ -106,10 +69,10 @@ export default function Profile() {
         </h1>
         <button
           type="submit"
-          onClick={() => setEdit(!edit)}
+          onClick={editProfileHandler}
           className="bg-secondary px-4 py-2 text-white tracking-wider text-xs rounded-full lg:text-sm"
         >
-          {loading ? <Loader /> : edit ? 'Save' : 'Edit'}
+          {loading.edit ? 'Loading...' : edit ? 'Save' : 'Edit'}
         </button>
       </header>
       {!user ? (
@@ -132,13 +95,13 @@ export default function Profile() {
               id="first_name"
               className="text-sm lg:text-lg px-2 py-1 text-gray-500 border-gray-500 tracking-wider bg-transparent border-b-2 w-full"
               disabled={!edit}
-              value={user.firstName}
+              value={signupInput.firstName}
               onChange={(e) =>
                 setSignupInput({ ...signupInput, firstName: e.target.value })
               }
             />
             <small className="block text-red-500 text-xs">
-              {error.firstName}
+              {formError.firstName}
             </small>
           </p>
           <p className="space-y-2 w-full">
@@ -154,16 +117,16 @@ export default function Profile() {
               id="last_name"
               disabled={!edit}
               className="text-sm lg:text-lg px-2 py-1 text-gray-500 border-gray-500 tracking-wider bg-transparent border-b-2 w-full"
-              value={user.lastName}
+              value={signupInput.lastName}
               onChange={(e) =>
                 setSignupInput({ ...signupInput, lastName: e.target.value })
               }
             />
             <small className="block text-red-500 text-xs">
-              {error.lastName}
+              {formError.lastName}
             </small>
           </p>
-          <p className="space-y-2 w-full">
+          {/* <p className="space-y-2 w-full">
             <label
               htmlFor="email"
               className="block text-gray-600 text-sm lg:text-lg"
@@ -176,13 +139,15 @@ export default function Profile() {
               id="email"
               className="text-sm lg:text-lg px-2 py-1 text-gray-500 border-gray-500 tracking-wider bg-transparent border-b-2 w-full"
               disabled={!edit}
-              value={user.email}
+              value={signupInput.email}
               onChange={(e) =>
                 setSignupInput({ ...signupInput, email: e.target.value })
               }
             />
-            <small className="block text-red-500 text-xs">{error.email}</small>
-          </p>
+            <small className="block text-red-500 text-xs">
+              {formError.email}
+            </small>
+          </p> */}
         </form>
       )}
       <button
@@ -190,7 +155,9 @@ export default function Profile() {
         onClick={logoutHandler}
       >
         <img className="h-10 lg:h-8" src={loginIcon} alt="user nav icon" />
-        <p className="tracking-wider text-primary lg:text-xl">Logout</p>
+        <p className="tracking-wider text-primary lg:text-xl">
+          {loading.logout ? 'Loading...' : 'Logout'}
+        </p>
       </button>
     </div>
   );
