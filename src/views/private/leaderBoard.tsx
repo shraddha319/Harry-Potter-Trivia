@@ -1,47 +1,52 @@
 import { ReactComponent as LeaderBoardIcon } from '../../images/Triwizard-cup.svg';
 import { ReactComponent as Crown } from '../../images/crown.svg';
 import { Loader } from '../../components';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context';
-import { getLeaderboard } from '../../api';
+import { useEffect } from 'react';
+import { useQuiz, fetchLeaderboard, useUser } from '../../contexts';
 
 export default function LeaderBoard() {
   const {
-    dispatchAuth,
-    auth: { leaderboard, user },
-  } = useAuth();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+    quiz: {
+      leaderboard: { status, data: leaderboard },
+    },
+    dispatchQuiz,
+  } = useQuiz();
+  const {
+    user: { profile: user },
+  } = useUser();
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (!user) return;
+  //     setLoading(true);
+  //     try {
+  //       const {
+  //         data: {
+  //           data: { leaderboard },
+  //         },
+  //         status,
+  //       } = await getLeaderboard(user._id);
+  //       if (status === 200) {
+  //         dispatchAuth({ type: 'FETCH_LEADERBOARD', payload: { leaderboard } });
+  //         console.log(leaderboard);
+  //       }
+  //     } catch (err) {
+  //       if (err.response && err.response?.status === 403)
+  //         navigate('/login', { state: { from: '/leaderboard' } });
+  //       console.log(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   })();
+  // }, []);
 
   useEffect(() => {
-    (async () => {
-      if (!user) return;
-      setLoading(true);
-      try {
-        const {
-          data: {
-            data: { leaderboard },
-          },
-          status,
-        } = await getLeaderboard(user._id);
-        if (status === 200) {
-          dispatchAuth({ type: 'FETCH_LEADERBOARD', payload: { leaderboard } });
-          console.log(leaderboard);
-        }
-      } catch (err) {
-        if (err.response && err.response?.status === 403)
-          navigate('/login', { state: { from: '/leaderboard' } });
-        console.log(err.message);
-      } finally {
-        setLoading(false);
-      }
-    })();
+    if (status === 'idle' && user) fetchLeaderboard(dispatchQuiz, user._id);
   }, []);
 
   return (
     <div className="flex flex-col h-full items-center space-y-1">
-      {!leaderboard || loading ? (
+      {!leaderboard || status === 'loading' ? (
         <Loader />
       ) : (
         <>
