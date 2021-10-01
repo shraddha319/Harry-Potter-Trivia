@@ -15,33 +15,8 @@ export default function LeaderBoard() {
     user: { profile: user },
   } = useUser();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (!user) return;
-  //     setLoading(true);
-  //     try {
-  //       const {
-  //         data: {
-  //           data: { leaderboard },
-  //         },
-  //         status,
-  //       } = await getLeaderboard(user._id);
-  //       if (status === 200) {
-  //         dispatchAuth({ type: 'FETCH_LEADERBOARD', payload: { leaderboard } });
-  //         console.log(leaderboard);
-  //       }
-  //     } catch (err) {
-  //       if (err.response && err.response?.status === 403)
-  //         navigate('/login', { state: { from: '/leaderboard' } });
-  //       console.log(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   })();
-  // }, []);
-
   useEffect(() => {
-    if (status === 'idle' && user) fetchLeaderboard(dispatchQuiz, user._id);
+    if (user) fetchLeaderboard(dispatchQuiz, user._id);
   }, []);
 
   return (
