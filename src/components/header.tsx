@@ -4,7 +4,7 @@ import loginIcon from '../images/Chamber-of-secrets-key.svg';
 import hamburgerIcon from '../images/hamburger.svg';
 import closeMenu from '../images/cancel.svg';
 import userIcon from '../images/avatar-male.svg';
-import logoIcon from '../images/Glasses-and-Scar.svg';
+import logoIcon from '../images/logo.svg';
 import themeIcon from '../images/wand.svg';
 import scoreIcon from '../images/Quidditch-goals.svg';
 import { useState } from 'react';
